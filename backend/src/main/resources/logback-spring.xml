@@ -1,6 +1,6 @@
 <configuration>
     <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
-        <destination>localhost:5000</destination>
+        <destination>${LOGSTASH_HOST:-localhost}:${LOGSTASH_TCP_PORT:-5000}</destination>
         <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
     </appender>
     <root level="INFO">
