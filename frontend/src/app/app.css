@@ -1,0 +1,17 @@
+.content {
+    display: flex;
+    align-items: flex-start; 
+    flex-direction: row;
+    gap: 1rem;
+    width: 100%;
+}
+
+.sidebar {
+    flex: 0 0 16%; 
+    min-width: 200px;
+    height: 500px; 
+}
+
+.main-content {
+    flex: 1; 
+} 
