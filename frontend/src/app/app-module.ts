@@ -16,12 +16,14 @@ import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { Hello } from './features/hello/hello';
 import { Navbar } from './core/navbar/navbar';
+import { Home } from './features/home/home';
 
 @NgModule({
   declarations: [
     App,
     Hello,
     Navbar,
+    Home,
   ],
   imports: [
     BrowserModule,
