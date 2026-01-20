@@ -17,6 +17,7 @@ import { App } from './app';
 import { Hello } from './features/hello/hello';
 import { Navbar } from './core/navbar/navbar';
 import { Home } from './features/home/home';
+import { Sidebar } from './core/sidebar/sidebar';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { Home } from './features/home/home';
     Hello,
     Navbar,
     Home,
+    Sidebar,
   ],
   imports: [
     BrowserModule,
