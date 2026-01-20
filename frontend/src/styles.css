@@ -1,1 +1,16 @@
-/* You can add global styles to this file, and also import other style files */
+@import "primeicons/primeicons.css";
+@import "primeflex/primeflex.css";
+
+body, .p-component {
+  font-family: 'Ubuntu Mono', monospace !important;
+}
+
+.container { 
+    border: 1px solid var(--p-zinc-600);
+    border-radius: 4px;
+    padding: 8px;
+}
+
+p-inputtext, p-select {
+    width: 200px;
+}
