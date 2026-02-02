@@ -2,3 +2,4 @@
 .env
 postgres_data
 backend/logs
+frontend/nginx.conf
