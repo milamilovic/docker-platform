@@ -24,6 +24,9 @@ import { Navbar } from './core/navbar/navbar';
 import { Home } from './features/home/home';
 import { Sidebar } from './core/sidebar/sidebar';
 import { Register } from './features/register/register';
+import { Auth } from './features/auth/auth';
+import {Interceptor} from './features/auth/interceptor';
+import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -33,13 +36,14 @@ import { Register } from './features/register/register';
     Home,
     Sidebar,
     Register,
+    Auth,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ButtonModule,
-    InputTextModule, 
-    IconFieldModule, 
+    InputTextModule,
+    IconFieldModule,
     InputIconModule,
     AvatarModule,
     DialogModule,
@@ -53,12 +57,14 @@ import { Register } from './features/register/register';
     // provideAnimationsAsync(), // Required for animations
     providePrimeNG({
         theme: {
-            preset: Aura, 
+            preset: Aura,
             options: {
-                darkModeSelector: 'system' 
+                darkModeSelector: 'system'
             }
         }
-    })
+    }),
+    provideHttpClient(withInterceptorsFromDi()),
+    { provide: HTTP_INTERCEPTORS, useClass:Interceptor, multi: true },
   ],
   bootstrap: [App]
 })

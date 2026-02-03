@@ -1,4 +1,4 @@
-<p-button label="Sign up" (onClick)="showDialog()" [loading]="loading"/>
+<p-button label="Sign up" (onClick)="showDialog()" />
 
 <p-dialog
     header="Register New User"
@@ -43,7 +43,7 @@
 
         <div class="flex justify-content-end gap-2 mt-3">
             <p-button label="Cancel" icon="pi pi-times" (onClick)="hideDialog()" styleClass="p-button-text"></p-button>
-            <p-button label="Register" icon="pi pi-check" type="submit" [disabled]="registerForm.invalid"></p-button>
+            <p-button label="Register" icon="pi pi-check" type="submit" [loading]="loading" [disabled]="registerForm.invalid"></p-button>
         </div>
     </form>
 </p-dialog>
