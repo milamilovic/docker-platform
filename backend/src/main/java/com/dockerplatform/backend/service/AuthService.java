@@ -1,6 +1,7 @@
 package com.dockerplatform.backend.service;
 
 import com.dockerplatform.backend.dto.AuthRequest;
+import com.dockerplatform.backend.dto.AuthResponse;
 import com.dockerplatform.backend.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,10 +23,13 @@ public class AuthService {
     @Autowired
     UserService userService;
 
-    public String authenticateUser(AuthRequest dto) throws AuthenticationException {
+    public AuthResponse authenticateUser(AuthRequest dto) throws AuthenticationException {
         Authentication auth = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(dto.username(), dto.password()));
         SecurityContextHolder.getContext().setAuthentication(auth);
-        return jwtService.generateToken(userService.findByUsername(dto.username()));
+        String token = jwtService.generateToken(userService.findByUsername(dto.username()));
+        AuthResponse authResponse = new AuthResponse();
+        authResponse.setToken(token);
+        return authResponse;
     }
 }

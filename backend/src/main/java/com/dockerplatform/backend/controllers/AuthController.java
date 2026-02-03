@@ -1,6 +1,7 @@
 package com.dockerplatform.backend.controllers;
 
 import com.dockerplatform.backend.dto.AuthRequest;
+import com.dockerplatform.backend.dto.AuthResponse;
 import com.dockerplatform.backend.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class AuthController {
     AuthService service;
 
     @PostMapping
-    public ResponseEntity<String> authenticate(@Valid @RequestBody AuthRequest dto){
+    public ResponseEntity<AuthResponse> authenticate(@Valid @RequestBody AuthRequest dto){
         try {
             return ResponseEntity.ok(service.authenticateUser(dto));
         } catch (AuthenticationException e) {
