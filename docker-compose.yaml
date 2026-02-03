@@ -1,6 +1,6 @@
 services: 
   database: 
-    image: postgres:latest
+    image: postgres:18
     container_name: postgres
     environment:
       - POSTGRES_DB=${POSTGRES_DB}
@@ -9,7 +9,7 @@ services:
     ports: 
       - "${POSTGRES_PORT}:5432"
     volumes: 
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     restart: 
       always
 
@@ -22,6 +22,7 @@ services:
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
       - ELASTIC_USERNAME=${ELASTIC_USERNAME}
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - ELASTIC_HOST=${ELASTIC_HOST}
     ports:
       - "${ELASTIC_PORT}:9200"
     volumes:
@@ -34,6 +35,8 @@ services:
     environment:
       - ELASTIC_USERNAME=${ELASTIC_USERNAME}
       - ELASTIC_PASSWORD=${ELASTIC_PASSWORD}
+      - ELASTIC_HOST=${ELASTIC_HOST}
+      - ELASTIC_PORT=${ELASTIC_PORT}
       - BATCH_SIZE=${BATCH_SIZE}
       - BATCH_DELAY=${BATCH_DELAY}
       - LOGSTASH_TCP_PORT=${LOGSTASH_TCP_PORT}
@@ -55,6 +58,10 @@ services:
       - "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"
       - "POSTGRES_HOST=${POSTGRES_HOST}"
       - "POSTGRES_PORT=${POSTGRES_PORT}"
+      - "ELASTIC_HOST=${ELASTIC_HOST}"
+      - "ELASTIC_PORT=${ELASTIC_PORT}"
+      - "ELASTIC_USERNAME=${ELASTIC_USERNAME}"
+      - "ELASTIC_PASSWORD=${ELASTIC_PASSWORD}"
     depends_on:
       - database
 
