@@ -10,14 +10,20 @@ import { InputTextModule } from 'primeng/inputtext';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { AvatarModule } from 'primeng/avatar';
+import { DialogModule } from 'primeng/dialog';
+import { ToastModule } from 'primeng/toast';
+import { PasswordModule } from 'primeng/password';
+
 // import { AvatarGroupModule } from 'primeng/avatargroup';
 
+import { ReactiveFormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { Hello } from './features/hello/hello';
 import { Navbar } from './core/navbar/navbar';
 import { Home } from './features/home/home';
 import { Sidebar } from './core/sidebar/sidebar';
+import { Register } from './features/register/register';
 
 @NgModule({
   declarations: [
@@ -26,6 +32,7 @@ import { Sidebar } from './core/sidebar/sidebar';
     Navbar,
     Home,
     Sidebar,
+    Register,
   ],
   imports: [
     BrowserModule,
@@ -35,6 +42,10 @@ import { Sidebar } from './core/sidebar/sidebar';
     IconFieldModule, 
     InputIconModule,
     AvatarModule,
+    DialogModule,
+    ReactiveFormsModule,
+    ToastModule,
+    PasswordModule
     // AvatarGroupModule
   ],
   providers: [
