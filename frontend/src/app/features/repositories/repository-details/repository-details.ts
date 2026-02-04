@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
@@ -44,7 +44,8 @@ export class RepositoryDetails implements OnInit {
     private router: Router,
     private messageService: MessageService,
     private repositoryService: RepositoryService,
-    private tagService: TagService
+    private tagService: TagService,
+    private cdr: ChangeDetectorRef
   ) {
     this.settingsForm = this.fb.group({
       description: ['', Validators.required],
@@ -77,6 +78,7 @@ export class RepositoryDetails implements OnInit {
           });
           this.router.navigate(['/repositories']);
         }
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.messageService.add({
@@ -94,6 +96,7 @@ export class RepositoryDetails implements OnInit {
         this.tags = tags;
         this.filteredTags = tags;
         this.sortTags();
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.messageService.add({

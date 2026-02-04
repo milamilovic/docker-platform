@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
@@ -24,7 +24,8 @@ export class OfficialRepositories implements OnInit {
     private fb: FormBuilder,
     private messageService: MessageService,
     private repositoryService: RepositoryService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {
     this.createForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3), Validators.pattern(/^[a-z0-9-]+$/)]],
@@ -41,6 +42,7 @@ export class OfficialRepositories implements OnInit {
       next: (repos) => {
         this.repositories = repos;
         this.filteredRepositories = repos;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         this.messageService.add({
