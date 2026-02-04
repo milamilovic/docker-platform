@@ -1,4 +1,12 @@
 <div class="container sidebar">
-    <p><a routerLink="/repositories">My Repositories</a></p>
-    <p><a routerLink="/admin/official-repositories" *ngIf="isAdmin()">Official Images</a></p>
+    <p *ngIf="isLoggedIn()">
+        <a routerLink="/repositories" routerLinkActive="active">
+            <i class="pi pi-box"></i> My Repositories
+        </a>
+    </p>
+    <p *ngIf="isAdmin()">
+        <a routerLink="/admin/official-repositories" routerLinkActive="active">
+            <i class="pi pi-shield"></i> Official Images
+        </a>
+    </p>
 </div>
