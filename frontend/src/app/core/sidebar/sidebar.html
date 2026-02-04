@@ -1,3 +1,12 @@
 <div class="container sidebar">
-    <p>Sidebar menu </p>
+  <p>
+    <a routerLink="" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+      <i class="pi pi-home"></i> Home
+    </a>
+  </p>
+  <p *ngIf="isAdmin()">
+    <a routerLink="/analytics" routerLinkActive="active">
+      <i class="pi pi-clipboard"></i> Analytics
+    </a>
+  </p>
 </div>

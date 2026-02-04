@@ -13,6 +13,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { PasswordModule } from 'primeng/password';
+import { CheckboxModule } from 'primeng/checkbox';
 
 // import { AvatarGroupModule } from 'primeng/avatargroup';
 
@@ -27,6 +28,7 @@ import { Register } from './features/register/register';
 import { Auth } from './features/auth/auth';
 import {Interceptor} from './features/auth/interceptor';
 import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
+import { AnalyticsModule } from './features/analytics/analytics.module';
 
 @NgModule({
   declarations: [
@@ -49,7 +51,9 @@ import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@ang
     DialogModule,
     ReactiveFormsModule,
     ToastModule,
-    PasswordModule
+    PasswordModule,
+    AnalyticsModule,
+    CheckboxModule,
     // AvatarGroupModule
   ],
   providers: [
