@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {AuthService} from '../../features/auth/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -6,6 +7,13 @@ import { Component } from '@angular/core';
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
-export class Navbar {
+export class Navbar implements OnInit {
+    constructor(protected authService: AuthService) {}
+    isLoggedIn = false;
+    ngOnInit(): void {
+          this.authService.loggedIn$.subscribe(loggedIn => {
+            this.isLoggedIn = loggedIn;
+          })
+    }
 
 }
