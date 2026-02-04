@@ -1,0 +1,41 @@
+.navbar {
+    width: 100%;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 16px;
+    padding-right: 16px;
+    margin-bottom: 1rem;
+}
+
+.logo {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+    cursor: pointer;
+}
+
+.logo p {
+    font-size: 24px;
+    font-weight: 600;
+    /* color: var(--p-primary-color);  */
+}
+
+img {
+    width: 48px;
+    height: 48px;
+    filter: invert(72%) sepia(55%) saturate(464%) hue-rotate(107deg) brightness(93%) contrast(90%);
+}
+
+.unregistered-menu {
+    display: flex;
+    gap: 1rem;
+}
+
+.p-inputtext {
+    width: 400px;
+}
+i:hover {
+    scale: 1.2;
+}

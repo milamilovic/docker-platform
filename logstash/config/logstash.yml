@@ -1,0 +1,5 @@
+monitoring.elasticsearch.hosts: [ "http://${ELASTIC_HOST}:${ELASTIC_PORT}" ]
+monitoring.elasticsearch.username: "${ELASTIC_USERNAME}"
+monitoring.elasticsearch.password: "${ELASTIC_PASSWORD}"
+pipeline.batch.size: "${BATCH_SIZE}"
+pipeline.batch.delay: "${BATCH_DELAY}"

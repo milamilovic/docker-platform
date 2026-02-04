@@ -1,0 +1,21 @@
+<div class="container navbar">
+    <div class="logo">
+        <img src="assets/logo-docker.svg" alt="Logo"/>
+        <p>hub</p>
+    </div>
+    <p-iconField>
+        <p-inputIcon class="pi pi-search" />
+        <input type="text" pInputText placeholder="Search" />
+    </p-iconField>
+    <div class="unregistered-menu" *ngIf="!isLoggedIn">
+        <app-auth/>
+        <app-register/>
+    </div>
+    <div class="admin-menu" *ngIf="isLoggedIn">
+        <p-avatar label="A" size="large" shape="circle" class="mr-4"/>
+        <i class="pi pi-sign-out" (click)="authService.logOut()"></i>
+    </div>
+    <!-- <div class="regular-menu">
+        <p-avatar label="R" size="large" shape="circle"/>
+    </div> -->
+</div>
