@@ -31,10 +31,6 @@ import {Interceptor} from './features/auth/interceptor';
 import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
 import { RepositoriesModule } from './features/repositories/repositories-module';
 
-import { RepositoriesList } from './features/repositories/repositories-list/repositories-list';
-import { RepositoryDetails } from './features/repositories/repository-details/repository-details';
-import { OfficialRepositories } from './features/repositories/official-repositories/official-repositories';
-
 @NgModule({
   declarations: [
     App,
@@ -44,9 +40,6 @@ import { OfficialRepositories } from './features/repositories/official-repositor
     Sidebar,
     Register,
     Auth,
-    RepositoriesList,
-    RepositoryDetails,
-    OfficialRepositories,
   ],
   imports: [
     BrowserModule,

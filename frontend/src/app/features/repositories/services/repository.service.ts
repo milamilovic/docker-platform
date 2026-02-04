@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, delay } from 'rxjs';
 import { Repository, RepositoryDto, RepositoryUpdateDto } from '../models/repository.model';
+import { AuthService } from '../../auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -61,26 +62,36 @@ export class RepositoryService {
     }
   ];
 
-  constructor() { }
+  constructor(private authService: AuthService) { }
 
   getMyRepositories(): Observable<Repository[]> {
-    // Filter repositories for current user (simulate logged in user)
-    const userRepos = this.mockRepositories.filter(r => r.ownerId === 'user1');
-    return of(userRepos).pipe(delay(300));
+    const userRole = this.authService.getRole();
+    const currentUserId = this.authService.getUserId();
+    let userRepos: Repository[];
+    
+    if (userRole === 'ADMIN') {
+      // return all if admin
+      userRepos = this.mockRepositories;
+    } else {
+      // just private if regular user
+      userRepos = this.mockRepositories.filter(r => r.ownerId === currentUserId);
+    }
+    
+    return of(userRepos);
   }
 
   getAllRepositories(): Observable<Repository[]> {
-    return of(this.mockRepositories).pipe(delay(300));
+    return of(this.mockRepositories);
   }
 
   getOfficialRepositories(): Observable<Repository[]> {
     const officialRepos = this.mockRepositories.filter(r => r.isOfficial);
-    return of(officialRepos).pipe(delay(300));
+    return of(officialRepos);
   }
 
   getRepositoryById(id: string): Observable<Repository | undefined> {
     const repo = this.mockRepositories.find(r => r.id === id);
-    return of(repo).pipe(delay(300));
+    return of(repo);
   }
 
   createRepository(dto: RepositoryDto): Observable<Repository> {
@@ -97,7 +108,7 @@ export class RepositoryService {
       isOfficial: dto.isOfficial || false
     };
     this.mockRepositories.push(newRepo);
-    return of(newRepo).pipe(delay(500));
+    return of(newRepo);
   }
 
   updateRepository(id: string, dto: RepositoryUpdateDto): Observable<Repository> {
@@ -108,7 +119,7 @@ export class RepositoryService {
         ...dto,
         modifiedAt: Date.now()
       };
-      return of(this.mockRepositories[index]).pipe(delay(500));
+      return of(this.mockRepositories[index]);
     }
     throw new Error('Repository not found');
   }
@@ -118,6 +129,6 @@ export class RepositoryService {
     if (index !== -1) {
       this.mockRepositories.splice(index, 1);
     }
-    return of(void 0).pipe(delay(500));
+    return of(void 0);
   }
 }

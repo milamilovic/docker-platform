@@ -59,7 +59,7 @@ export class TagService {
 
   getTagsByRepository(repositoryId: string): Observable<Tag[]> {
     const tags = this.mockTags.filter(t => t.repositoryId === repositoryId);
-    return of(tags).pipe(delay(300));
+    return of(tags);
   }
 
   deleteTag(id: string): Observable<void> {
@@ -67,6 +67,6 @@ export class TagService {
     if (index !== -1) {
       this.mockTags.splice(index, 1);
     }
-    return of(void 0).pipe(delay(500));
+    return of(void 0);
   }
 }
