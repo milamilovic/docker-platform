@@ -27,9 +27,6 @@ public class AuthService {
         Authentication auth = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(dto.username(), dto.password()));
         SecurityContextHolder.getContext().setAuthentication(auth);
-        String token = jwtService.generateToken(userService.findByUsername(dto.username()));
-        AuthResponse authResponse = new AuthResponse();
-        authResponse.setToken(token);
-        return authResponse;
+        return new AuthResponse(jwtService.generateToken(userService.findByUsername(dto.username())));
     }
 }
