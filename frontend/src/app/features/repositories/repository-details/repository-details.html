@@ -57,19 +57,27 @@
             <div class="tags-actions">
                 <p-iconfield iconPosition="left">
                     <p-inputicon styleClass="pi pi-search" />
-                    <input pInputText placeholder="Search tags..." [(ngModel)]="searchTag" (input)="filterTags()" />
+                    <input pInputText placeholder="Search tags..." [(ngModel)]="searchTag" (input)="onSearchTag()" />
                 </p-iconfield>
+                <div class="results-per-page">
+                    <label>Results per page:</label>
+                    <p-select
+                        [options]="pageSizeOptions"
+                        [(ngModel)]="pageSize"
+                        (onChange)="onPageSizeChange()">
+                    </p-select>
+                </div>
                 <p-select 
                     [options]="sortOptions" 
                     [(ngModel)]="selectedSort" 
                     placeholder="Sort by"
-                    (onChange)="sortTags()">
+                    (onChange)="onSortChange($event)">
                 </p-select>
             </div>
         </div>
 
         <div class="tags-list">
-            <div *ngFor="let tag of filteredTags" class="container tag-item">
+            <div *ngFor="let tag of tags" class="container tag-item">
                 <div class="tag-info">
                     <div class="tag-name">
                         <i class="pi pi-tag"></i>
@@ -91,11 +99,30 @@
                 </div>
             </div>
 
-            <div *ngIf="filteredTags.length === 0" class="no-results">
+            <div *ngIf="tags.length === 0" class="no-results">
                 <i class="pi pi-tag"></i>
                 <p>No tags found</p>
                 <small>Push your first image using: docker push {{ getRepositoryDisplayName() }}:tag</small>
             </div>
+        </div>
+
+        <!-- Tags Pagination -->
+        <div class="pagination" *ngIf="totalResults > pageSize">
+        <p-button
+            icon="pi pi-angle-left"
+            (onClick)="previousPage()"
+            [disabled]="currentPage === 0"
+            styleClass="p-button-text">
+        </p-button>
+        <span class="page-info">
+                    Page {{ currentPage + 1 }} of {{ totalPages }}
+                </span>
+        <p-button
+            icon="pi pi-angle-right"
+            (onClick)="nextPage()"
+            [disabled]="currentPage >= totalPages - 1"
+            styleClass="p-button-text">
+        </p-button>
         </div>
     </div>
 
@@ -115,7 +142,7 @@
                     </textarea>
                 </div>
 
-                <div class="field flex flex-column gap-2" *ngIf="!repository?.isOfficial">
+                <div class="field flex flex-column gap-2" *ngIf="repository && !repository.isOfficial">
                     <label class="font-bold">Visibility</label>
                     <div class="flex gap-3">
                         <div class="flex align-items-center gap-2">

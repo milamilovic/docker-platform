@@ -3,11 +3,12 @@ package com.dockerplatform.backend.controllers;
 import com.dockerplatform.backend.dto.TagDto;
 import com.dockerplatform.backend.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -19,11 +20,14 @@ public class TagController {
 
     @GetMapping("/{repositoryId}/tags")
     @PreAuthorize("hasAnyRole('REGULAR', 'ADMIN')")
-    public ResponseEntity<List<TagDto>> getTagsByRepository(@PathVariable UUID repositoryId) {
-        List<TagDto> tags = tagService.getTagsByRepository(repositoryId);
+    public ResponseEntity<Page<TagDto>> getTagsByRepository(
+            @PathVariable UUID repositoryId,
+            Pageable pageable,
+            @RequestParam(required = false) String search) {
+
+        Page<TagDto> tags = tagService.getTagsByRepository(repositoryId, pageable, search);
         return ResponseEntity.ok(tags);
     }
-
 
     @DeleteMapping("/{id}")
     @PreAuthorize("hasAnyRole('REGULAR', 'ADMIN')")

@@ -8,14 +8,16 @@ import com.dockerplatform.backend.repositories.RepositoryRepo;
 import com.dockerplatform.backend.repositories.TagRepo;
 import com.dockerplatform.backend.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class TagService {
@@ -36,7 +38,33 @@ public class TagService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    public List<TagDto> getTagsByRepository(UUID repositoryId) {
+    /**
+     * Converts JPA property names (camelCase) to database column names (snake_case)
+     * for native queries
+     */
+    private Pageable convertToNativePageable(Pageable pageable) {
+        Sort nativeSort = Sort.unsorted();
+
+        if (pageable.getSort().isSorted()) {
+            for (Sort.Order order : pageable.getSort()) {
+                String property = order.getProperty();
+                String column = camelToSnake(property);
+                nativeSort = nativeSort.and(Sort.by(order.getDirection(), column));
+            }
+        }
+
+        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), nativeSort);
+    }
+
+    /**
+     * Converts camelCase to snake_case
+     * e.g., pushedAt -> pushed_at, createdAt -> created_at
+     */
+    private String camelToSnake(String camelCase) {
+        return camelCase.replaceAll("([a-z])([A-Z])", "$1_$2").toLowerCase();
+    }
+
+    public Page<TagDto> getTagsByRepository(UUID repositoryId, Pageable pageable, String search) {
         Repository repository = repositoryRepo.findById(repositoryId)
                 .orElseThrow(() -> new RuntimeException("Repository not found"));
 
@@ -47,10 +75,16 @@ public class TagService {
             throw new RuntimeException("Access denied");
         }
 
-        List<Tag> tags = tagRepo.findByRepository(repository);
-        return tags.stream()
-                .map(TagDto::toDto)
-                .collect(Collectors.toList());
+        // Convert to native column names for the query
+        Pageable nativePageable = convertToNativePageable(pageable);
+
+        Page<Tag> tagPage = tagRepo.findByRepositoryWithFilters(
+                repositoryId,
+                search,
+                nativePageable
+        );
+
+        return tagPage.map(TagDto::toDto);
     }
 
     @Transactional

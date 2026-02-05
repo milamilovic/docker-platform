@@ -7,12 +7,26 @@
     <div class="search-filter">
         <p-iconfield iconPosition="left">
             <p-inputicon styleClass="pi pi-search" />
-            <input pInputText placeholder="Search official repositories..." [(ngModel)]="searchTerm" (input)="filterRepositories()" />
+            <input pInputText placeholder="Search official repositories..." [(ngModel)]="searchTerm" (input)="onSearch()" />
         </p-iconfield>
+        <div class="results-per-page">
+            <label>Results per page:</label>
+            <p-select
+                [options]="pageSizeOptions"
+                [(ngModel)]="pageSize"
+                (onChange)="onPageSizeChange()">
+            </p-select>
+        </div>
+        <p-select 
+            [options]="sortOptions" 
+            [(ngModel)]="selectedSort" 
+            placeholder="Sort by"
+            (onChange)="onSortChange($event)">
+        </p-select>
     </div>
 
     <div class="repositories-list">
-        <div *ngFor="let repo of filteredRepositories" class="container repository-item" (click)="viewDetails(repo.id)">
+        <div *ngFor="let repo of repositories" class="container repository-item" (click)="viewDetails(repo.id)">
             <div class="repo-header">
                 <div class="repo-name">
                     <h3>{{ repo.name }}</h3>
@@ -28,10 +42,34 @@
             </div>
         </div>
 
-        <div *ngIf="filteredRepositories.length === 0" class="no-results">
+        <div *ngIf="repositories.length === 0 && !loading" class="no-results">
             <i class="pi pi-inbox"></i>
             <p>No official repositories found</p>
         </div>
+
+        <div *ngIf="loading" class="no-results">
+            <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
+            <p>Loading repositories...</p>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="totalResults > pageSize">
+      <p-button
+        icon="pi pi-angle-left"
+        (onClick)="previousPage()"
+        [disabled]="currentPage === 0"
+        styleClass="p-button-text">
+      </p-button>
+      <span class="page-info">
+                Page {{ currentPage + 1 }} of {{ totalPages }}
+            </span>
+      <p-button
+        icon="pi pi-angle-right"
+        (onClick)="nextPage()"
+        [disabled]="currentPage >= totalPages - 1"
+        styleClass="p-button-text">
+      </p-button>
     </div>
 </div>
 

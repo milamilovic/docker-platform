@@ -4,8 +4,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { Repository, RepositoryUpdateDto } from '../models/repository.model';
 import { Tag } from '../models/tag.model';
+import { SpringPage } from '../models/spring-page.model';
 import { RepositoryService } from '../services/repository.service';
 import { TagService } from '../services/tag.service';
+import { debounceTime, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-repository-details',
@@ -17,7 +19,6 @@ import { TagService } from '../services/tag.service';
 export class RepositoryDetails implements OnInit {
   repository?: Repository;
   tags: Tag[] = [];
-  filteredTags: Tag[] = [];
   activeTab: string = 'tags';
   settingsForm: FormGroup;
   loadingUpdate: boolean = false;
@@ -26,16 +27,33 @@ export class RepositoryDetails implements OnInit {
   displayDeleteRepoDialog: boolean = false;
   tagToDelete?: Tag;
   confirmDeleteName: string = '';
+  
+  // Tags pagination
+  currentPage: number = 0;
+  pageSize: number = 10;
+  totalElements: number = 0;
+  totalPages: number = 0;
+  pageSizeOptions = [
+    { label: '5', value: 5 },
+    { label: '10', value: 10 },
+    { label: '20', value: 20 },
+    { label: '50', value: 50 }
+  ];
+  
+  // Tags filtering and sorting
   searchTag: string = '';
-  selectedSort: string = 'newest';
+  selectedSort: string = 'pushedAt,desc';
+  
+  // Debounce search
+  private searchSubject = new Subject<string>();
 
   sortOptions = [
-    { label: 'Newest First', value: 'newest' },
-    { label: 'Oldest First', value: 'oldest' },
-    { label: 'Name (A-Z)', value: 'name-asc' },
-    { label: 'Name (Z-A)', value: 'name-desc' },
-    { label: 'Size (Largest)', value: 'size-desc' },
-    { label: 'Size (Smallest)', value: 'size-asc' }
+    { label: 'Newest First', value: 'pushedAt,desc' },
+    { label: 'Oldest First', value: 'pushedAt,asc' },
+    { label: 'Name (A-Z)', value: 'name,asc' },
+    { label: 'Name (Z-A)', value: 'name,desc' },
+    { label: 'Size (Largest)', value: 'size,desc' },
+    { label: 'Size (Smallest)', value: 'size,asc' }
   ];
 
   constructor(
@@ -59,6 +77,14 @@ export class RepositoryDetails implements OnInit {
       this.loadRepository(id);
       this.loadTags(id);
     }
+    
+    // debounced search
+    this.searchSubject.pipe(debounceTime(300)).subscribe(() => {
+      this.currentPage = 0;
+      if (this.repository) {
+        this.loadTags(this.repository.id);
+      }
+    });
   }
 
   loadRepository(id: string): void {
@@ -91,11 +117,17 @@ export class RepositoryDetails implements OnInit {
   }
 
   loadTags(repositoryId: string): void {
-    this.tagService.getTagsByRepository(repositoryId).subscribe({
-      next: (tags) => {
-        this.tags = tags;
-        this.filteredTags = tags;
-        this.sortTags();
+    this.tagService.getTagsByRepository(
+      repositoryId,
+      this.currentPage,
+      this.pageSize,
+      this.selectedSort,
+      this.searchTag || undefined
+    ).subscribe({
+      next: (response: SpringPage<Tag>) => {
+        this.tags = response.content;
+        this.totalElements = response.totalElements;
+        this.totalPages = response.totalPages;
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -108,46 +140,53 @@ export class RepositoryDetails implements OnInit {
     });
   }
 
-  filterTags(): void {
-    let filtered = this.tags;
-
-    if (this.searchTag) {
-      const term = this.searchTag.toLowerCase();
-      filtered = filtered.filter(tag => 
-        tag.name.toLowerCase().includes(term) ||
-        tag.digest.toLowerCase().includes(term)
-      );
-    }
-
-    this.filteredTags = filtered;
-    this.sortTags();
+  onSearchTag(): void {
+    this.searchSubject.next(this.searchTag);
   }
 
-  sortTags(): void {
-    const sorted = [...this.filteredTags];
-
-    switch (this.selectedSort) {
-      case 'newest':
-        sorted.sort((a, b) => (b.pushedAt || b.createdAt) - (a.pushedAt || a.createdAt));
-        break;
-      case 'oldest':
-        sorted.sort((a, b) => (a.pushedAt || a.createdAt) - (b.pushedAt || b.createdAt));
-        break;
-      case 'name-asc':
-        sorted.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case 'name-desc':
-        sorted.sort((a, b) => b.name.localeCompare(a.name));
-        break;
-      case 'size-desc':
-        sorted.sort((a, b) => b.size - a.size);
-        break;
-      case 'size-asc':
-        sorted.sort((a, b) => a.size - b.size);
-        break;
+  onSortChange(event: any): void {
+    this.selectedSort = event.value;
+    this.currentPage = 0;
+    if (this.repository) {
+      this.loadTags(this.repository.id);
     }
+  }
 
-    this.filteredTags = sorted;
+  onPageChange(event: any): void {
+    this.currentPage = event.page;
+    this.pageSize = event.rows;
+    if (this.repository) {
+      this.loadTags(this.repository.id);
+    }
+  }
+
+  get totalResults(): number {
+    return this.totalElements;
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 0) {
+      this.currentPage--;
+      if (this.repository) {
+        this.loadTags(this.repository.id);
+      }
+    }
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages - 1) {
+      this.currentPage++;
+      if (this.repository) {
+        this.loadTags(this.repository.id);
+      }
+    }
+  }
+
+  onPageSizeChange(): void {
+    this.currentPage = 0;
+    if (this.repository) {
+      this.loadTags(this.repository.id);
+    }
   }
 
   updateSettings(): void {

@@ -9,16 +9,17 @@ import com.dockerplatform.backend.repositories.RepositoryRepo;
 import com.dockerplatform.backend.repositories.TagRepo;
 import com.dockerplatform.backend.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class RepositoryService {
@@ -45,36 +46,77 @@ public class RepositoryService {
                 .anyMatch(a -> a.getAuthority().equals("ADMIN"));
     }
 
-    public List<RepositoryDto> getMyRepositories() {
+    /**
+     * Converts JPA property names (camelCase) to database column names (snake_case)
+     * for native queries
+     */
+    private Pageable convertToNativePageable(Pageable pageable) {
+        Sort nativeSort = Sort.unsorted();
+
+        if (pageable.getSort().isSorted()) {
+            for (Sort.Order order : pageable.getSort()) {
+                String property = order.getProperty();
+                String column = camelToSnake(property);
+                nativeSort = nativeSort.and(Sort.by(order.getDirection(), column));
+            }
+        }
+
+        return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), nativeSort);
+    }
+
+    /**
+     * Converts camelCase to snake_case
+     * e.g., modifiedAt -> modified_at, numberOfPulls -> number_of_pulls
+     */
+    private String camelToSnake(String camelCase) {
+        return camelCase.replaceAll("([a-z])([A-Z])", "$1_$2").toLowerCase();
+    }
+
+    public Page<RepositoryDto> getMyRepositories(Pageable pageable, String search, String visibility) {
         User currentUser = getCurrentUser();
 
-        List<Repository> repositories = repositoryRepo.findByOwner(currentUser);
+        // Convert to native column names for the query
+        Pageable nativePageable = convertToNativePageable(pageable);
 
-        return repositories.stream()
-                .map(RepositoryDto::toResponseDto)
-                .collect(Collectors.toList());
+        Page<Repository> repositoryPage = repositoryRepo.findByOwnerWithFilters(
+                currentUser.getId(),
+                search,
+                visibility != null ? visibility : "all",
+                nativePageable
+        );
+
+        return repositoryPage.map(RepositoryDto::toResponseDto);
     }
 
-    public List<RepositoryDto> getOfficialRepositories() {
-        List<Repository> repositories = repositoryRepo.findByIsOfficial(true);
-        return repositories.stream()
-                .map(RepositoryDto::toResponseDto)
-                .collect(Collectors.toList());
+    public Page<RepositoryDto> getOfficialRepositories(Pageable pageable, String search) {
+        // Convert to native column names for the query
+        Pageable nativePageable = convertToNativePageable(pageable);
+
+        Page<Repository> repositoryPage = repositoryRepo.findByIsOfficialWithFilters(
+                search,
+                nativePageable
+        );
+
+        return repositoryPage.map(RepositoryDto::toResponseDto);
     }
 
-    public List<RepositoryDto> getMyOfficialRepositories() {
+    public Page<RepositoryDto> getMyOfficialRepositories(Pageable pageable, String search) {
         if (!isAdmin()) {
             throw new RuntimeException("Only admins can manage official repositories");
         }
 
         User currentUser = getCurrentUser();
 
-        // Return official repositories owned by current admin
-        List<Repository> repositories = repositoryRepo.findByOwner(currentUser);
-        return repositories.stream()
-                .filter(Repository::isOfficial)
-                .map(RepositoryDto::toResponseDto)
-                .collect(Collectors.toList());
+        // Convert to native column names for the query
+        Pageable nativePageable = convertToNativePageable(pageable);
+
+        Page<Repository> repositoryPage = repositoryRepo.findByOwnerAndIsOfficialWithFilters(
+                currentUser.getId(),
+                search,
+                nativePageable
+        );
+
+        return repositoryPage.map(RepositoryDto::toResponseDto);
     }
 
     public RepositoryDto getRepositoryById(UUID id) {

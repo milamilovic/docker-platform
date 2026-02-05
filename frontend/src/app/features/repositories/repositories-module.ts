@@ -13,6 +13,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { SelectModule } from 'primeng/select';
+import { PaginatorModule } from 'primeng/paginator';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { SelectModule } from 'primeng/select';
     SelectModule,
     ReactiveFormsModule,
     FormsModule,
+    PaginatorModule
   ],
   exports: [
     RepositoriesList,

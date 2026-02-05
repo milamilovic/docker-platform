@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Repository, RepositoryDto, RepositoryUpdateDto } from '../models/repository.model';
+import { SpringPage } from '../models/spring-page.model';
 import { env } from '../../../shared/env';
 
 @Injectable({
@@ -13,16 +14,69 @@ export class RepositoryService {
 
   constructor(private http: HttpClient) { }
 
-  getMyRepositories(): Observable<Repository[]> {
-    return this.http.get<Repository[]>(`${this.API_URL}`);
+  getMyRepositories(
+    page: number = 0,
+    size: number = 10,
+    sort?: string,
+    search?: string,
+    visibility: string = 'all'
+  ): Observable<SpringPage<Repository>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString())
+      .set('visibility', visibility);
+
+    if (sort) {
+      params = params.set('sort', sort);
+    }
+
+    if (search) {
+      params = params.set('search', search);
+    }
+
+    return this.http.get<SpringPage<Repository>>(`${this.API_URL}`, { params });
   }
 
-  getOfficialRepositories(): Observable<Repository[]> {
-    return this.http.get<Repository[]>(`${this.API_URL}/official`);
+  getOfficialRepositories(
+    page: number = 0,
+    size: number = 10,
+    sort?: string,
+    search?: string
+  ): Observable<SpringPage<Repository>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    if (sort) {
+      params = params.set('sort', sort);
+    }
+
+    if (search) {
+      params = params.set('search', search);
+    }
+
+    return this.http.get<SpringPage<Repository>>(`${this.API_URL}/official`, { params });
   }
 
-  getMyOfficialRepositories(): Observable<Repository[]> {
-    return this.http.get<Repository[]>(`${this.API_URL}/my-official`);
+  getMyOfficialRepositories(
+    page: number = 0,
+    size: number = 10,
+    sort?: string,
+    search?: string
+  ): Observable<SpringPage<Repository>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    if (sort) {
+      params = params.set('sort', sort);
+    }
+
+    if (search) {
+      params = params.set('search', search);
+    }
+
+    return this.http.get<SpringPage<Repository>>(`${this.API_URL}/my-official`, { params });
   }
 
   getRepositoryById(id: string): Observable<Repository> {

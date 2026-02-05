@@ -5,12 +5,13 @@ import com.dockerplatform.backend.dto.RepositoryDto;
 import com.dockerplatform.backend.dto.RepositoryUpdateDto;
 import com.dockerplatform.backend.service.RepositoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -22,22 +23,32 @@ public class RepositoryController {
 
     @GetMapping
     @PreAuthorize("hasAnyRole('REGULAR', 'ADMIN')")
-    public ResponseEntity<List<RepositoryDto>> getMyRepositories() {
-        List<RepositoryDto> repositories = repositoryService.getMyRepositories();
+    public ResponseEntity<Page<RepositoryDto>> getMyRepositories(
+            Pageable pageable,
+            @RequestParam(required = false) String search,
+            @RequestParam(defaultValue = "all") String visibility) {
+
+        Page<RepositoryDto> repositories = repositoryService.getMyRepositories(pageable, search, visibility);
         return ResponseEntity.ok(repositories);
     }
 
     @GetMapping("/official")
     @PreAuthorize("hasAnyRole('REGULAR', 'ADMIN')")
-    public ResponseEntity<List<RepositoryDto>> getOfficialRepositories() {
-        List<RepositoryDto> repositories = repositoryService.getOfficialRepositories();
+    public ResponseEntity<Page<RepositoryDto>> getOfficialRepositories(
+            Pageable pageable,
+            @RequestParam(required = false) String search) {
+
+        Page<RepositoryDto> repositories = repositoryService.getOfficialRepositories(pageable, search);
         return ResponseEntity.ok(repositories);
     }
 
     @GetMapping("/my-official")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<RepositoryDto>> getMyOfficialRepositories() {
-        List<RepositoryDto> repositories = repositoryService.getMyOfficialRepositories();
+    public ResponseEntity<Page<RepositoryDto>> getMyOfficialRepositories(
+            Pageable pageable,
+            @RequestParam(required = false) String search) {
+
+        Page<RepositoryDto> repositories = repositoryService.getMyOfficialRepositories(pageable, search);
         return ResponseEntity.ok(repositories);
     }
 

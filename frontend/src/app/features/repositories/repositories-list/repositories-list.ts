@@ -3,7 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { Repository, RepositoryDto } from '../models/repository.model';
+import { SpringPage } from '../models/spring-page.model';
 import { RepositoryService } from '../services/repository.service';
+import { debounceTime, Subject } from 'rxjs';
 
 @Component({
   selector: 'app-repositories-list',
@@ -14,17 +16,43 @@ import { RepositoryService } from '../services/repository.service';
 })
 export class RepositoriesList implements OnInit {
   repositories: Repository[] = [];
-  filteredRepositories: Repository[] = [];
   displayCreateDialog: boolean = false;
   loading: boolean = false;
   createForm: FormGroup;
+  
+  // Pagination
+  currentPage: number = 0;
+  pageSize: number = 10;
+  totalElements: number = 0;
+  totalPages: number = 0;
+  pageSizeOptions = [
+    { label: '5', value: 5 },
+    { label: '10', value: 10 },
+    { label: '20', value: 20 },
+    { label: '50', value: 50 }
+  ];
+  
+  // Filtering and sorting
   searchTerm: string = '';
   selectedVisibility: string = 'all';
+  selectedSort: string = 'modifiedAt,desc';
+  
+  // Debounce search
+  private searchSubject = new Subject<string>();
 
   visibilityOptions = [
     { label: 'All Repositories', value: 'all' },
     { label: 'Public', value: 'public' },
     { label: 'Private', value: 'private' }
+  ];
+
+  sortOptions = [
+    { label: 'Recently Updated', value: 'modifiedAt,desc' },
+    { label: 'Recently Created', value: 'createdAt,desc' },
+    { label: 'Name (A-Z)', value: 'name,asc' },
+    { label: 'Name (Z-A)', value: 'name,desc' },
+    { label: 'Most Pulls', value: 'numberOfPulls,desc' },
+    { label: 'Most Stars', value: 'numberOfStars,desc' }
   ];
 
   constructor(
@@ -43,13 +71,28 @@ export class RepositoriesList implements OnInit {
 
   ngOnInit(): void {
     this.loadRepositories();
+    
+    // debounced search
+    this.searchSubject.pipe(debounceTime(300)).subscribe(() => {
+      this.currentPage = 0;
+      this.loadRepositories();
+    });
   }
 
   loadRepositories(): void {
-    this.repositoryService.getMyRepositories().subscribe({
-      next: (repos) => {
-        this.repositories = repos;
-        this.filteredRepositories = repos;
+    this.loading = true;
+    this.repositoryService.getMyRepositories(
+      this.currentPage,
+      this.pageSize,
+      this.selectedSort,
+      this.searchTerm || undefined,
+      this.selectedVisibility
+    ).subscribe({
+      next: (response: SpringPage<Repository>) => {
+        this.repositories = response.content;
+        this.totalElements = response.totalElements;
+        this.totalPages = response.totalPages;
+        this.loading = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -58,30 +101,47 @@ export class RepositoriesList implements OnInit {
           summary: 'Error',
           detail: 'Failed to load repositories'
         });
+        this.loading = false;
       }
     });
   }
 
-  filterRepositories(): void {
-    let filtered = this.repositories;
+  onSearch(): void {
+    this.searchSubject.next(this.searchTerm);
+  }
 
-    // Filter by search term
-    if (this.searchTerm) {
-      const term = this.searchTerm.toLowerCase();
-      filtered = filtered.filter(repo => 
-        repo.name.toLowerCase().includes(term) ||
-        repo.description.toLowerCase().includes(term)
-      );
+  onVisibilityChange(): void {
+    this.currentPage = 0;
+    this.loadRepositories();
+  }
+
+  onSortChange(event: any): void {
+    this.selectedSort = event.value;
+    this.currentPage = 0;
+    this.loadRepositories();
+  }
+
+  get totalResults(): number {
+    return this.totalElements;
+  }
+
+  previousPage(): void {
+    if (this.currentPage > 0) {
+      this.currentPage--;
+      this.loadRepositories();
     }
+  }
 
-    // Filter by visibility
-    if (this.selectedVisibility !== 'all') {
-      filtered = filtered.filter(repo => 
-        this.selectedVisibility === 'public' ? repo.isPublic : !repo.isPublic
-      );
+  nextPage(): void {
+    if (this.currentPage < this.totalPages - 1) {
+      this.currentPage++;
+      this.loadRepositories();
     }
+  }
 
-    this.filteredRepositories = filtered;
+  onPageSizeChange(): void {
+    this.currentPage = 0;
+    this.loadRepositories();
   }
 
   showCreateDialog(): void {
@@ -110,6 +170,7 @@ export class RepositoriesList implements OnInit {
           });
           this.hideCreateDialog();
           this.loading = false;
+          this.currentPage = 0;
           this.loadRepositories();
         },
         error: (err) => {
