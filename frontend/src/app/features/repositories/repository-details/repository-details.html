@@ -115,15 +115,15 @@
                     </textarea>
                 </div>
 
-                <div class="field flex flex-column gap-2">
+                <div class="field flex flex-column gap-2" *ngIf="!repository?.isOfficial">
                     <label class="font-bold">Visibility</label>
                     <div class="flex gap-3">
                         <div class="flex align-items-center gap-2">
-                            <input type="radio" id="settings-public" formControlName="isPublic" [value]="true" />
+                            <input type="radio" id="settings-public" formControlName="isPublic" [value]="true"/>
                             <label for="settings-public">Public</label>
                         </div>
                         <div class="flex align-items-center gap-2">
-                            <input type="radio" id="settings-private" formControlName="isPublic" [value]="false" />
+                            <input type="radio" id="settings-private" formControlName="isPublic" [value]="false"/>
                             <label for="settings-private">Private</label>
                         </div>
                     </div>

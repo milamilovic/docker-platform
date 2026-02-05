@@ -16,7 +16,7 @@ export interface RepositoryDto {
   name: string;
   description: string;
   isPublic: boolean;
-  isOfficial?: boolean;
+  isOfficial: boolean;
 }
 
 export interface RepositoryUpdateDto {

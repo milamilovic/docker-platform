@@ -135,9 +135,9 @@ public class RepositoryService {
         Repository repository = repositoryRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Repository not found"));
 
-        // Check if user is owner or admin
+        // Check if user is owner
         User currentUser = getCurrentUser();
-        if (!repository.getOwner().getId().equals(currentUser.getId()) && !isAdmin()) {
+        if (!repository.getOwner().getId().equals(currentUser.getId())) {
             throw new RuntimeException("Access denied");
         }
 
@@ -146,6 +146,9 @@ public class RepositoryService {
         }
 
         if (dto.getIsPublic() != null) {
+            if(repository.isOfficial() && isAdmin() && dto.getIsPublic() == Boolean.TRUE) {
+                throw new RuntimeException("Official repositories can not be private!");
+            }
             repository.setPublic(dto.getIsPublic());
         }
 
