@@ -32,6 +32,9 @@ public class Repository {
     private User owner;
 
     @Column(nullable = false)
+    private String ownerUsername;
+
+    @Column(nullable = false)
     private String description;
 
     @Column(nullable = false, updatable = false)
