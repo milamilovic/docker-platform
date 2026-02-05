@@ -21,6 +21,13 @@ public class SystemSetupRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         if (userService.findByUsername("superadmin") == null){
+
+            Path secretFolder = Path.of("secrets");
+            Path secretFile = secretFolder.resolve("super_admin.txt");
+
+            if (!Files.exists(secretFolder)) {
+                Files.createDirectories(secretFolder);
+            }
             String rawPassword = UUID.randomUUID().toString();
 
             UserDto dto = new UserDto();
@@ -29,7 +36,7 @@ public class SystemSetupRunner implements CommandLineRunner {
             dto.setEmail("admin@admin.com");
 
             userService.register(dto, UserRole.SUPER_ADMIN);
-            Files.writeString(Path.of("super_admin.txt"),rawPassword);
+            Files.writeString(secretFile,rawPassword);
             System.out.println("Super admin created!");
         }
     }
