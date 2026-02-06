@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -72,7 +73,7 @@ public class TagService {
         User currentUser = getCurrentUser();
         if (!repository.isPublic() &&
                 !repository.getOwner().getId().equals(currentUser.getId())) {
-            throw new RuntimeException("Access denied");
+            throw new AccessDeniedException("Access denied");
         }
 
         // Convert to native column names for the query
@@ -97,7 +98,7 @@ public class TagService {
         // Check if user is owner
         User currentUser = getCurrentUser();
         if (!repository.getOwner().getId().equals(currentUser.getId())) {
-            throw new RuntimeException("Access denied");
+            throw new AccessDeniedException("Access denied");
         }
 
         tagRepo.delete(tag);
