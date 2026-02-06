@@ -1,0 +1,53 @@
+.card { 
+    background: var(--p-zinc-900);
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.7);
+
+    cursor: pointer;
+}
+
+.top-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.stat-text { 
+    color: var(--p-zinc-500);
+}
+
+hr { 
+    border: 0;
+    border-top: 1px solid var(--p-zinc-500);
+    margin: 12px 0;
+    width: 270px;
+}
+
+.top-stat p {
+    margin: 0;
+}
+
+.card-title { 
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.card-owner { 
+    color: var(--p-emerald-400); 
+}
+
+.bot-stat {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+img { 
+    width: 36px;
+}
+
+.card-header { 
+    display: flex;
+    gap: 0.5rem; 
+}

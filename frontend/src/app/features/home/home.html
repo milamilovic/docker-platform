@@ -1,20 +1,17 @@
 <div class="base container home">
-    <h3>Trending this week</h3>
+    <h3>Most Pulled Images</h3>
     <div class="items">
-        <div *ngFor="let item of [].constructor(4); let i = index" class="container item">
-            Docker Image {{ i }}
-        </div>
+        <app-repo-card 
+        *ngFor="let repo of topPulled" 
+        [repo]="repo">
+        </app-repo-card>
     </div>
-    <h3>Most pulled images</h3>
+    <h3>Most Starred Images</h3>
     <div class="items">
-        <div *ngFor="let item of [].constructor(4); let i = index" class="container item">
-            Docker Image {{ i }}
-        </div>
+        <app-repo-card 
+        *ngFor="let repo of topPulled" 
+        [repo]="repo">
+        </app-repo-card>
     </div>
-    <h3>Database & storage</h3>
-    <div class="items">
-        <div *ngFor="let item of [].constructor(4); let i = index" class="container item">
-            Docker Image {{ i }}
-        </div>
-    </div>
+   
 </div>

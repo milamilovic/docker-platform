@@ -27,6 +27,7 @@ import { Register } from './features/register/register';
 import { Auth } from './features/auth/auth';
 import {Interceptor} from './features/auth/interceptor';
 import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
+import { RepoCard } from './shared/components/repo-card/repo-card';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@ang
     Sidebar,
     Register,
     Auth,
+    RepoCard,
   ],
   imports: [
     BrowserModule,
