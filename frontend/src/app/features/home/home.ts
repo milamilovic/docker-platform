@@ -11,12 +11,13 @@ import { RepositoryService } from './repository.service';
 })
 export class Home {
   topPulled?: Repository[];
-  topStorred?: Repository[];
+  topStarred?: Repository[];
 
   constructor(private repoService: RepositoryService, private cd: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadTopPulled(0, 8);
+    this.loadTopStarred(0, 8);
   }
 
   loadTopPulled(page: number, size: number) {
@@ -27,8 +28,8 @@ export class Home {
   }
 
   loadTopStarred(page: number, size: number) {
-    this.repoService.getTopPulled(page, size).subscribe((data) => {
-      this.topStorred = data.content;
+    this.repoService.getTopStarred(page, size).subscribe((data) => {
+      this.topStarred = data.content;
       this.cd.markForCheck();
     });
   }

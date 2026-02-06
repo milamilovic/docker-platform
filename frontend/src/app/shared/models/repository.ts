@@ -8,7 +8,7 @@ export interface Repository {
   numberOfPulls: number;
   numberOfStars: number;
 
-  isOfficial: boolean;
+  official: boolean;
 
   createdAt: number;    
   modifiedAt: number;    

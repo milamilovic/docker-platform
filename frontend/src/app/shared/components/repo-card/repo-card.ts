@@ -13,7 +13,7 @@ export class RepoCard {
 
     formatCount(count: number): string {
       if (count >= 1_000_000) {
-          return (count / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M+';
+        return (count / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M+';
       } else if (count >= 1_000) {
         return (count / 1_000).toFixed(1).replace(/\.0$/, '') + 'K+';
       } else {
@@ -22,16 +22,16 @@ export class RepoCard {
     }
 
     formatLastUpdated(timestamp: number): string {
-    const now = Date.now();
-    let diff = now - timestamp;
+        const now = Date.now();
+        let diff = now - timestamp;
 
-    if (diff < 0) diff = 0; // timestamp u budućnosti
+        if (diff < 0) diff = 0; 
 
-    const msPerMinute = 1000 * 60;
-    const msPerHour = msPerMinute * 60;
-    const msPerDay = msPerHour * 24;
-    const msPerMonth = msPerDay * 30;
-    const msPerYear = msPerDay * 365;
+        const msPerMinute = 1000 * 60;
+        const msPerHour = msPerMinute * 60;
+        const msPerDay = msPerHour * 24;
+        const msPerMonth = msPerDay * 30;
+        const msPerYear = msPerDay * 365;
 
         if (diff < msPerHour) {
             const minutes = Math.round(diff / msPerMinute);
@@ -50,6 +50,4 @@ export class RepoCard {
             return `about ${years} year${years > 1 ? 's' : ''}`;
         }
     }
-
-
 }
