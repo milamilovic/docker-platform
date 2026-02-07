@@ -1,7 +1,9 @@
 package com.dockerplatform.backend.dto;
 
+import com.dockerplatform.backend.models.Repository;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.UUID;
@@ -9,6 +11,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 public class RepositoryDTO {
     private UUID id;
     private String name;
@@ -23,4 +26,18 @@ public class RepositoryDTO {
 
     private Long createdAt;
     private Long modifiedAt;
+
+    public static RepositoryDTO from(Repository repo) {
+        RepositoryDTO dto = new RepositoryDTO();
+        dto.setId(repo.getId());
+        dto.setName(repo.getName());
+        dto.setDescription(repo.getDescription());
+        dto.setOwnerUsername(repo.getOwnerUsername());
+        dto.setNumberOfPulls(repo.getNumberOfPulls());
+        dto.setNumberOfStars(repo.getNumberOfStars());
+        dto.setOfficial(repo.isOfficial());
+        dto.setCreatedAt(repo.getCreatedAt());
+        dto.setModifiedAt(repo.getCreatedAt());
+        return dto;
+    }
 }

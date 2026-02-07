@@ -31,4 +31,13 @@ public class RepositoryController {
     ) {
         return repositoryService.findTopStarred(page, size);
     }
+
+    @GetMapping("/search")
+    public Page<RepositoryDTO> getTopStarredRepositories(
+            @RequestParam(defaultValue = "") String q,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return repositoryService.search(q, page, size);
+    }
 }

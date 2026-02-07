@@ -5,7 +5,13 @@
     </div>
     <p-iconField>
         <p-inputIcon class="pi pi-search" />
-        <input type="text" pInputText placeholder="Search" />
+        <input 
+            #searchInput
+            type="text"
+            pInputText
+            placeholder="Type / to search"
+            [formControl]="searchControl"
+            (keyup.enter)="onEnter()" />
     </p-iconField>
     <div class="unregistered-menu" *ngIf="!isLoggedIn">
         <app-auth/>

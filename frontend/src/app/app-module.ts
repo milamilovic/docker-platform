@@ -13,6 +13,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { PasswordModule } from 'primeng/password';
+import { CheckboxModule } from 'primeng/checkbox';
 
 // import { AvatarGroupModule } from 'primeng/avatargroup';
 
@@ -28,6 +29,7 @@ import { Auth } from './features/auth/auth';
 import {Interceptor} from './features/auth/interceptor';
 import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
 import { RepoCard } from './shared/components/repo-card/repo-card';
+import { SearchResults } from './features/search-results/search-results';
 
 @NgModule({
   declarations: [
@@ -39,6 +41,7 @@ import { RepoCard } from './shared/components/repo-card/repo-card';
     Register,
     Auth,
     RepoCard,
+    SearchResults,
   ],
   imports: [
     BrowserModule,
@@ -51,7 +54,9 @@ import { RepoCard } from './shared/components/repo-card/repo-card';
     DialogModule,
     ReactiveFormsModule,
     ToastModule,
-    PasswordModule
+    PasswordModule, 
+    CheckboxModule
+    
     // AvatarGroupModule
   ],
   providers: [

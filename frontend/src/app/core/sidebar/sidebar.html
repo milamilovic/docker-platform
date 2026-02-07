@@ -1,3 +1,39 @@
 <div class="container sidebar">
-    <p>Sidebar menu </p>
+    <!-- <p>Sidebar menu </p> -->
+    <h3>Search Filters</h3>
+
+    <div class="filters">
+        <div class="filter-row">
+            <p-checkbox
+                inputId="official"
+                formControlName="isOfficial"
+                [binary]="true"
+            ></p-checkbox>
+            <label for="official">
+                Docker Official Image
+            </label>
+        </div>
+
+        <div class="filter-row">
+            <p-checkbox
+                inputId="verified"
+                formControlName="isVerified"
+                [binary]="true"
+            ></p-checkbox>
+            <label for="verified">
+                Verified Publisher
+            </label>
+        </div>
+
+        <div class="filter-row"> 
+            <p-checkbox
+                inputId="sponsored"
+                formControlName="isSponsored"
+                [binary]="true"
+            ></p-checkbox>
+            <label for="sponsored">
+                Sponsored OSS
+            </label>
+        </div>
+    </div>
 </div>
