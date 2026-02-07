@@ -1,9 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { LogEntry, LogSearchResponse, LogSearchQuery} from '../models/log.model';
 import {LogLevel} from '../enums/log-level.enum';
 import { AnalyticsService} from '../services/analytics.service';
+
+interface RawLogEntry {
+  '@timestamp': string;
+  level: string;
+  message: string;
+  logger_name?: string;
+  thread_name?: string;
+  stack_trace?: string;
+  additionalData?: any;
+}
 
 @Component({
   selector: 'app-analytics',
@@ -38,7 +48,8 @@ export class Analytics implements OnInit {
   constructor(
     private fb: FormBuilder,
     private messageService: MessageService,
-    private analyticsService: AnalyticsService
+    private analyticsService: AnalyticsService,
+    private cdr: ChangeDetectorRef
   ) {
     this.searchForm = this.fb.group({
       query: [''],
@@ -52,6 +63,7 @@ export class Analytics implements OnInit {
   }
 
   onSearch(): void {
+    this.loading = true;
     this.loading = true;
     this.currentPage = 0;
     this.performSearch();
@@ -69,25 +81,72 @@ export class Analytics implements OnInit {
       from: this.currentPage * this.pageSize
     };
 
-    this.analyticsService.searchLogs(query).subscribe({
-      next: (response) => {
-        this.searchResults = response.hits;
-        this.totalResults = response.total;
-        this.searchTook = response.took;
-        this.totalPages = Math.ceil(response.total / this.pageSize);
-        this.searchPerformed = true;
-        this.loading = false;
-        this.expandedLog = null;
-      },
-      error: (err) => {
+    let search = true;
+    if (formValue.startDate && formValue.endDate) {
+      const start = new Date(formValue.startDate);
+      const end = new Date(formValue.endDate);
+      const now = new Date();
+      // endDate ne sme biti posle sada
+      if (end > now) {
+        console.log("End date must be in the past.");
         this.messageService.add({
-          severity: 'error',
+          severity: 'warn',
           summary: 'Search Failed',
-          detail: 'Failed to search logs. Please try again.'
+          detail: 'End date must be in the past.'
         });
-        this.loading = false;
+        search = false;
+        this.loading=false;
+        this.searchResults=[];
+        this.searchTook=0;
+        this.totalResults=0;
       }
-    });
+      // startDate mora biti pre endDate
+      if (start >= end) {
+        console.log("Start date must be before end date.");
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Search Failed',
+          detail: 'Start date must be before end date.'
+        });
+        search = false;
+        this.loading=false;
+        this.searchResults=[];
+        this.searchTook=0;
+        this.totalResults=0;
+      }
+    }
+
+    if (search) {
+      this.analyticsService.searchLogs(query).subscribe({
+        next: (response: LogSearchResponse) => {
+          const rawHits: RawLogEntry[] = response.hits as unknown as RawLogEntry[];
+          this.searchResults = rawHits.map(hit => ({
+            timestamp: hit['@timestamp'],
+            level: hit.level,
+            message: hit.message,
+            logger: hit.logger_name,
+            thread: hit.thread_name,
+            stackTrace: hit.stack_trace,
+            additionalData: hit.additionalData
+          }));
+          this.totalResults = response.total;
+          this.searchTook = response.took;
+          this.totalPages = Math.ceil(response.total / this.pageSize);
+          this.searchPerformed = true;
+          this.loading = false;
+          this.expandedLog = null;
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Search Failed',
+            detail: 'Failed to search logs. Please try again.'
+          });
+          this.loading = false;
+        }
+      });
+    }
   }
 
   clearSearch(): void {
@@ -162,10 +221,33 @@ export class Analytics implements OnInit {
       startDate: formValue.startDate ? new Date(formValue.startDate).toISOString() : undefined,
       endDate: formValue.endDate ? new Date(formValue.endDate).toISOString() : undefined,
       levels: this.selectedLevels.length > 0 ? this.selectedLevels : undefined,
-      size: 10000 // Export more results
+      size: 10000
     };
 
-    this.analyticsService.exportLogs(query);
+    this.analyticsService.exportLogs(query).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `dockerplatform-logs-export-${Date.now()}.json`;
+        link.click();
+        URL.revokeObjectURL(url);
+        this.cdr.detectChanges();
+
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Export Successful',
+          detail: 'Logs exported successfully'
+        });
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Export Failed',
+          detail: 'Failed to export logs'
+        });
+      }
+    });
   }
 
   formatTimestamp(timestamp: string): string {

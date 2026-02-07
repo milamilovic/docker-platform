@@ -14,6 +14,7 @@ public class DockerPlatformBackendApplication {
 		log.info("Application is starting...");
 		log.info("Logs will be sent to Logstash");
 		SpringApplication.run(DockerPlatformBackendApplication.class, args);
+		log.warn("Application may not start yet... Please wait");
 		log.info("Application started");
 	}
 
