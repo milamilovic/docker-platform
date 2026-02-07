@@ -30,7 +30,6 @@ export class SearchResults {
         )
         .subscribe(q => {
             this.query = q;
-            console.log('Query string:', this.query);
             this.search(q, 0, 16);
         });
     }
@@ -40,8 +39,6 @@ export class SearchResults {
             this.pageInfo = page;
             this.repos = page.content;
             this.cd.detectChanges();
-            console.log(this.repos);
         });
     }
-
 }
