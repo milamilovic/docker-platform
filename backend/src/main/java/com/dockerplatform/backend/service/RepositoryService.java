@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,9 @@ public class RepositoryService {
 
     private User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new AccessDeniedException("User not authenticated");
+        }
         String username = authentication.getName();
         return userRepo.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -43,13 +47,9 @@ public class RepositoryService {
     private boolean isAdmin() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getAuthorities().stream()
-                .anyMatch(a -> a.getAuthority().equals("ADMIN"));
+                .anyMatch(a -> a.getAuthority().equals("ADMIN") || a.getAuthority().equals("ROLE_ADMIN"));
     }
 
-    /**
-     * Converts JPA property names (camelCase) to database column names (snake_case)
-     * for native queries
-     */
     private Pageable convertToNativePageable(Pageable pageable) {
         Sort nativeSort = Sort.unsorted();
 
@@ -64,10 +64,6 @@ public class RepositoryService {
         return PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), nativeSort);
     }
 
-    /**
-     * Converts camelCase to snake_case
-     * e.g., modifiedAt -> modified_at, numberOfPulls -> number_of_pulls
-     */
     private String camelToSnake(String camelCase) {
         return camelCase.replaceAll("([a-z])([A-Z])", "$1_$2").toLowerCase();
     }
@@ -102,7 +98,7 @@ public class RepositoryService {
 
     public Page<RepositoryDto> getMyOfficialRepositories(Pageable pageable, String search) {
         if (!isAdmin()) {
-            throw new RuntimeException("Only admins can manage official repositories");
+            throw new AccessDeniedException("Only admins can manage official repositories");
         }
 
         User currentUser = getCurrentUser();
@@ -128,7 +124,7 @@ public class RepositoryService {
         if (!repository.isPublic() &&
                 !repository.getOwner().getId().equals(currentUser.getId()) &&
                 !isAdmin()) {
-            throw new RuntimeException("Access denied");
+            throw new AccessDeniedException("Access denied");
         }
 
         return RepositoryDto.toResponseDto(repository);
@@ -141,7 +137,7 @@ public class RepositoryService {
         // Check if it's an official repository
         if (dto.isOfficial()) {
             if (!isAdmin()) {
-                throw new RuntimeException("Only admins can create official repositories");
+                throw new AccessDeniedException("Only admins can create official repositories");
             }
 
             // Check if official repository with this name already exists
@@ -180,7 +176,7 @@ public class RepositoryService {
         // Check if user is owner
         User currentUser = getCurrentUser();
         if (!repository.getOwner().getId().equals(currentUser.getId())) {
-            throw new RuntimeException("Access denied");
+            throw new AccessDeniedException("Access denied");
         }
 
         if (dto.getDescription() != null) {
@@ -189,7 +185,7 @@ public class RepositoryService {
 
         if (dto.getIsPublic() != null) {
             if(repository.isOfficial() && isAdmin() && dto.getIsPublic() == Boolean.TRUE) {
-                throw new RuntimeException("Official repositories can not be private!");
+                throw new IllegalArgumentException("Official repositories can not be private!");
             }
             repository.setPublic(dto.getIsPublic());
         }
@@ -209,7 +205,7 @@ public class RepositoryService {
         // Check if user is owner or admin
         User currentUser = getCurrentUser();
         if (!repository.getOwner().getId().equals(currentUser.getId()) && !isAdmin()) {
-            throw new RuntimeException("Access denied");
+            throw new AccessDeniedException("Access denied");
         }
 
         // Delete all tags first
