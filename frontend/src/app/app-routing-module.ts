@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { Hello } from './features/hello/hello';
 import { AuthGuard } from './features/auth/auth.guard';
-import { Home } from './features/home/home';
 import { SearchResults } from './features/search-results/search-results';
 import { RepositoriesList } from './features/repositories/repositories-list/repositories-list';
 import { RepositoryDetails } from './features/repositories/repository-details/repository-details';
