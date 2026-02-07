@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {AuthService} from '../../features/auth/auth.service';
+import { AuthService } from '../../features/auth/auth.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -13,5 +13,9 @@ export class Sidebar {
 
   isAdmin(): boolean {
     return this.authService.getRole() === 'ADMIN';
+  }
+
+  isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();
   }
 }
