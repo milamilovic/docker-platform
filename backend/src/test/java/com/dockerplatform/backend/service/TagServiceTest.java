@@ -1,5 +1,6 @@
 package com.dockerplatform.backend.service;
 
+import com.dockerplatform.backend.dto.CacheablePage;
 import com.dockerplatform.backend.dto.TagDto;
 import com.dockerplatform.backend.models.Repository;
 import com.dockerplatform.backend.models.Tag;
@@ -106,7 +107,7 @@ class TagServiceTest {
         )).thenReturn(tagPage);
 
         // Act
-        Page<TagDto> result = tagService.getTagsByRepository(testRepository.getId(), pageable, null);
+        CacheablePage<TagDto> result = tagService.getTagsByRepository(testRepository.getId(), pageable, null);
 
         // Assert
         assertNotNull(result);
@@ -138,7 +139,7 @@ class TagServiceTest {
         )).thenReturn(tagPage);
 
         // Act
-        Page<TagDto> result = tagService.getTagsByRepository(testRepository.getId(), pageable, "v1.0");
+        CacheablePage<TagDto> result = tagService.getTagsByRepository(testRepository.getId(), pageable, "v1.0");
 
         // Assert
         assertNotNull(result);

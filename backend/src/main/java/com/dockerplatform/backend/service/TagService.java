@@ -1,5 +1,6 @@
 package com.dockerplatform.backend.service;
 
+import com.dockerplatform.backend.dto.CacheablePage;
 import com.dockerplatform.backend.dto.TagDto;
 import com.dockerplatform.backend.models.Repository;
 import com.dockerplatform.backend.models.Tag;
@@ -8,6 +9,9 @@ import com.dockerplatform.backend.repositories.RepositoryRepo;
 import com.dockerplatform.backend.repositories.TagRepo;
 import com.dockerplatform.backend.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,6 +22,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 @Service
@@ -65,7 +70,10 @@ public class TagService {
         return camelCase.replaceAll("([a-z])([A-Z])", "$1_$2").toLowerCase();
     }
 
-    public Page<TagDto> getTagsByRepository(UUID repositoryId, Pageable pageable, String search) {
+    @Cacheable(value = "repositoryTags",
+            key = "#repositoryId + '_' + #pageable.pageNumber + '_' + #pageable.pageSize + '_' + (#search ?: 'null')",
+            unless = "#result == null")
+    public CacheablePage<TagDto> getTagsByRepository(UUID repositoryId, Pageable pageable, String search) {
         Repository repository = repositoryRepo.findById(repositoryId)
                 .orElseThrow(() -> new RuntimeException("Repository not found"));
 
@@ -85,10 +93,20 @@ public class TagService {
                 nativePageable
         );
 
-        return tagPage.map(TagDto::toDto);
+        Page<TagDto> dtoPage = tagPage.map(TagDto::toDto);
+        return new CacheablePage<>(
+                new ArrayList<>(dtoPage.getContent()),
+                dtoPage.getTotalPages(),
+                dtoPage.getTotalElements()
+        );
     }
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "repositoryTags", allEntries = true),
+            @CacheEvict(value = "repository", allEntries = true),
+            @CacheEvict(value = "myRepositories", allEntries = true)
+    })
     public void deleteTag(UUID tagId) {
         Tag tag = tagRepo.findById(tagId)
                 .orElseThrow(() -> new RuntimeException("Tag not found"));

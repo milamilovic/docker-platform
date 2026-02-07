@@ -1,5 +1,6 @@
 package com.dockerplatform.backend.service;
 
+import com.dockerplatform.backend.dto.CacheablePage;
 import com.dockerplatform.backend.dto.CreateRepositoryDto;
 import com.dockerplatform.backend.dto.RepositoryDto;
 import com.dockerplatform.backend.dto.RepositoryUpdateDto;
@@ -9,6 +10,9 @@ import com.dockerplatform.backend.repositories.RepositoryRepo;
 import com.dockerplatform.backend.repositories.TagRepo;
 import com.dockerplatform.backend.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -68,7 +73,10 @@ public class RepositoryService {
         return camelCase.replaceAll("([a-z])([A-Z])", "$1_$2").toLowerCase();
     }
 
-    public Page<RepositoryDto> getMyRepositories(Pageable pageable, String search, String visibility) {
+    @Cacheable(value = "myRepositories",
+            key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName() + '_' + #pageable.pageNumber + '_' + #pageable.pageSize + '_' + (#search ?: 'null') + '_' + #visibility",
+            unless = "#result == null")
+    public CacheablePage<RepositoryDto> getMyRepositories(Pageable pageable, String search, String visibility) {
         User currentUser = getCurrentUser();
 
         // Convert to native column names for the query
@@ -81,10 +89,18 @@ public class RepositoryService {
                 nativePageable
         );
 
-        return repositoryPage.map(RepositoryDto::toResponseDto);
+        Page<RepositoryDto> dtoPage = repositoryPage.map(RepositoryDto::toResponseDto);
+        return new CacheablePage<>(
+                new ArrayList<>(dtoPage.getContent()),
+                dtoPage.getTotalPages(),
+                dtoPage.getTotalElements()
+        );
     }
 
-    public Page<RepositoryDto> getOfficialRepositories(Pageable pageable, String search) {
+    @Cacheable(value = "officialRepositories",
+            key = "#pageable.pageNumber + '_' + #pageable.pageSize + '_' + (#search ?: 'null')",
+            unless = "#result == null")
+    public CacheablePage<RepositoryDto> getOfficialRepositories(Pageable pageable, String search) {
         // Convert to native column names for the query
         Pageable nativePageable = convertToNativePageable(pageable);
 
@@ -93,10 +109,18 @@ public class RepositoryService {
                 nativePageable
         );
 
-        return repositoryPage.map(RepositoryDto::toResponseDto);
+        Page<RepositoryDto> dtoPage = repositoryPage.map(RepositoryDto::toResponseDto);
+        return new CacheablePage<>(
+                new ArrayList<>(dtoPage.getContent()),
+                dtoPage.getTotalPages(),
+                dtoPage.getTotalElements()
+        );
     }
 
-    public Page<RepositoryDto> getMyOfficialRepositories(Pageable pageable, String search) {
+    @Cacheable(value = "myOfficialRepositories",
+            key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName() + '_' + #pageable.pageNumber + '_' + #pageable.pageSize + '_' + (#search ?: 'null')",
+            unless = "#result == null")
+    public CacheablePage<RepositoryDto> getMyOfficialRepositories(Pageable pageable, String search) {
         if (!isAdmin()) {
             throw new AccessDeniedException("Only admins can manage official repositories");
         }
@@ -112,9 +136,15 @@ public class RepositoryService {
                 nativePageable
         );
 
-        return repositoryPage.map(RepositoryDto::toResponseDto);
+        Page<RepositoryDto> dtoPage = repositoryPage.map(RepositoryDto::toResponseDto);
+        return new CacheablePage<>(
+                new ArrayList<>(dtoPage.getContent()),
+                dtoPage.getTotalPages(),
+                dtoPage.getTotalElements()
+        );
     }
 
+    @Cacheable(value = "repository", key = "#id", unless = "#result == null")
     public RepositoryDto getRepositoryById(UUID id) {
         Repository repository = repositoryRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Repository not found"));
@@ -131,6 +161,11 @@ public class RepositoryService {
     }
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "myRepositories", allEntries = true),
+            @CacheEvict(value = "officialRepositories", allEntries = true, condition = "#dto.isOfficial()"),
+            @CacheEvict(value = "myOfficialRepositories", allEntries = true, condition = "#dto.isOfficial()")
+    })
     public RepositoryDto createRepository(CreateRepositoryDto dto) {
         User currentUser = getCurrentUser();
 
@@ -169,6 +204,12 @@ public class RepositoryService {
     }
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "repository", key = "#id"),
+            @CacheEvict(value = "myRepositories", allEntries = true),
+            @CacheEvict(value = "officialRepositories", allEntries = true),
+            @CacheEvict(value = "myOfficialRepositories", allEntries = true)
+    })
     public RepositoryDto updateRepository(UUID id, RepositoryUpdateDto dto) {
         Repository repository = repositoryRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Repository not found"));
@@ -198,6 +239,13 @@ public class RepositoryService {
     }
 
     @Transactional
+    @Caching(evict = {
+            @CacheEvict(value = "repository", key = "#id"),
+            @CacheEvict(value = "myRepositories", allEntries = true),
+            @CacheEvict(value = "officialRepositories", allEntries = true),
+            @CacheEvict(value = "myOfficialRepositories", allEntries = true),
+            @CacheEvict(value = "repositoryTags", allEntries = true)
+    })
     public void deleteRepository(UUID id) {
         Repository repository = repositoryRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("Repository not found"));

@@ -1,5 +1,6 @@
 package com.dockerplatform.backend.service;
 
+import com.dockerplatform.backend.dto.CacheablePage;
 import com.dockerplatform.backend.dto.CreateRepositoryDto;
 import com.dockerplatform.backend.dto.RepositoryDto;
 import com.dockerplatform.backend.dto.RepositoryUpdateDto;
@@ -120,7 +121,7 @@ class RepositoryServiceTest {
         )).thenReturn(repositoryPage);
 
         // Act
-        Page<RepositoryDto> result = repositoryService.getMyRepositories(pageable, null, "all");
+        CacheablePage<RepositoryDto> result = repositoryService.getMyRepositories(pageable, null, "all");
 
         // Assert
         assertNotNull(result);
@@ -156,7 +157,7 @@ class RepositoryServiceTest {
                 .thenReturn(repositoryPage);
 
         // Act
-        Page<RepositoryDto> result = repositoryService.getOfficialRepositories(pageable, null);
+        CacheablePage<RepositoryDto> result = repositoryService.getOfficialRepositories(pageable, null);
 
         // Assert
         assertNotNull(result);
