@@ -45,4 +45,8 @@ export class Navbar implements OnInit {
             queryParams: { q: this.searchControl.value }
         });
     }
+    
+    onLogoClick() {
+        this.router.navigate(['/']);
+    }
 }
