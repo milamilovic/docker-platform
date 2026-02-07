@@ -1,7 +1,7 @@
 package com.dockerplatform.backend.controllers;
 
-import com.dockerplatform.backend.dto.RepositoryDTO;
-import com.dockerplatform.backend.service.RepositoryService;
+import com.dockerplatform.backend.dto.RepositorySearchDTO;
+import com.dockerplatform.backend.service.PublicRepositoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,34 +10,34 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/repositories")
-public class RepositoryController {
+@RequestMapping("/public/repositories")
+public class PublicRepositoryController {
 
     @Autowired
-    RepositoryService repositoryService;
+    PublicRepositoryService publicRepositoryService;
 
     @GetMapping("/top-pulled")
-    public Page<RepositoryDTO> getTopPulledRepositories(
+    public Page<RepositorySearchDTO> getTopPulledRepositories(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return repositoryService.findTopPulled(page, size);
+        return publicRepositoryService.findTopPulled(page, size);
     }
 
     @GetMapping("/top-starred")
-    public Page<RepositoryDTO> getTopStarredRepositories(
+    public Page<RepositorySearchDTO> getTopStarredRepositories(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return repositoryService.findTopStarred(page, size);
+        return publicRepositoryService.findTopStarred(page, size);
     }
 
     @GetMapping("/search")
-    public Page<RepositoryDTO> getTopStarredRepositories(
+    public Page<RepositorySearchDTO> getSearchedRepositories(
             @RequestParam(defaultValue = "") String q,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return repositoryService.search(q, page, size);
+        return publicRepositoryService.search(q, page, size);
     }
 }

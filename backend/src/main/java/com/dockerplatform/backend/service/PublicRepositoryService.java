@@ -1,9 +1,9 @@
 package com.dockerplatform.backend.service;
 
-import com.dockerplatform.backend.dto.RepositoryDTO;
+import com.dockerplatform.backend.dto.RepositorySearchDTO;
 import com.dockerplatform.backend.dto.SearchCriteria;
 import com.dockerplatform.backend.models.Repository;
-import com.dockerplatform.backend.repositories.RepositoryRepo;
+import com.dockerplatform.backend.repositories.PublicRepositoryRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,29 +16,29 @@ import java.util.ArrayList;
 import static com.dockerplatform.backend.utils.RepositorySpecifications.*;
 
 @Service
-public class RepositoryService {
+public class PublicRepositoryService {
 
     @Autowired
-    RepositoryRepo repositoryRepo;
+    PublicRepositoryRepo publicRepositoryRepo;
 
-    public Page<RepositoryDTO> findTopPulled(int page, int size) {
+    public Page<RepositorySearchDTO> findTopPulled(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return repositoryRepo.findTopPulled(pageable);
+        return publicRepositoryRepo.findTopPulled(pageable);
     }
 
-    public Page<RepositoryDTO> findTopStarred(int page, int size) {
+    public Page<RepositorySearchDTO> findTopStarred(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return repositoryRepo.findTopStarred(pageable);
+        return publicRepositoryRepo.findTopStarred(pageable);
     }
 
-    public Page<RepositoryDTO> search(String q, int page, int size) {
+    public Page<RepositorySearchDTO> search(String q, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
         SearchCriteria criteria = parse(q);
         Specification<Repository> spec = buildSpecification(criteria);
 
-        Page<Repository> repoPage = repositoryRepo.findAll(spec, pageable);
-        return repoPage.map(RepositoryDTO::from);
+        Page<Repository> repoPage = publicRepositoryRepo.findAll(spec, pageable);
+        return repoPage.map(RepositorySearchDTO::from);
     }
 
     private SearchCriteria parse(String query) {

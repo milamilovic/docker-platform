@@ -13,13 +13,13 @@ export class RepositoryService {
 
   getTopPulled(page: number, size: number): Observable<Page<Repository>> {
     return this.http.get<Page<Repository>>(
-      `${env.apiUrl}/repositories/top-pulled?page=${page}&size=${size}`
+      `${env.apiUrl}/public/repositories/top-pulled?page=${page}&size=${size}`
     );
   }
 
   getTopStarred(page: number, size: number): Observable<Page<Repository>> {
     return this.http.get<Page<Repository>>(
-      `${env.apiUrl}/repositories/top-starred?page=${page}&size=${size}`
+      `${env.apiUrl}/public/repositories/top-starred?page=${page}&size=${size}`
     );
   }
 }

@@ -13,7 +13,7 @@ export class SearchService {
 
   search(q: string, page: number, size: number): Observable<Page<Repository>> {
     return this.http.get<Page<Repository>>(
-      `${env.apiUrl}/repositories/search?q=${q}&page=${page}&size=${size}`
+      `${env.apiUrl}/public/repositories/search?q=${q}&page=${page}&size=${size}`
     );
   }
 }

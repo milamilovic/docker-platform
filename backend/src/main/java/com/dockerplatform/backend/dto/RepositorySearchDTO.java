@@ -12,7 +12,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class RepositoryDTO {
+public class RepositorySearchDTO {
     private UUID id;
     private String name;
     private String description;
@@ -27,8 +27,8 @@ public class RepositoryDTO {
     private Long createdAt;
     private Long modifiedAt;
 
-    public static RepositoryDTO from(Repository repo) {
-        RepositoryDTO dto = new RepositoryDTO();
+    public static RepositorySearchDTO from(Repository repo) {
+        RepositorySearchDTO dto = new RepositorySearchDTO();
         dto.setId(repo.getId());
         dto.setName(repo.getName());
         dto.setDescription(repo.getDescription());
