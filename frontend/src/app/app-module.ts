@@ -13,6 +13,8 @@ import { AvatarModule } from 'primeng/avatar';
 import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { PasswordModule } from 'primeng/password';
+import { SelectModule } from 'primeng/select';
+import { FormsModule } from '@angular/forms';
 
 // import { AvatarGroupModule } from 'primeng/avatargroup';
 
@@ -27,6 +29,7 @@ import { Register } from './features/register/register';
 import { Auth } from './features/auth/auth';
 import {Interceptor} from './features/auth/interceptor';
 import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
+import { RepositoriesModule } from './features/repositories/repositories-module';
 
 @NgModule({
   declarations: [
@@ -49,8 +52,11 @@ import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@ang
     DialogModule,
     ReactiveFormsModule,
     ToastModule,
-    PasswordModule
+    PasswordModule,
     // AvatarGroupModule
+    RepositoriesModule,
+    SelectModule,
+    FormsModule,
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

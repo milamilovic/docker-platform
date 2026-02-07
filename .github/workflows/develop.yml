@@ -4,9 +4,12 @@ on:
   pull_request:
     branches:
       - develop
+  push:
+    branches:
+      - develop
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
 
     services:
@@ -51,8 +54,28 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Build backend
-        run: mvn clean install
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          for i in {1..30}; do
+            if pg_isready -h localhost -p 5432 -U postgres; then
+              echo "PostgreSQL is ready!"
+              break
+            fi
+            echo "Waiting for PostgreSQL... ($i/30)"
+            sleep 2
+          done
 
-      - name: Run tests
-        run: mvn test
+      - name: Verify PostgreSQL connection
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d dockerplatform -c "SELECT version();"
+
+      - name: Build backend
+        run: mvn clean compile -DskipTests
+
+      - name: Run unit tests
+        run: mvn test -Dtest="**/*Test.java,!**/*IntegrationTest.java" -DfailIfNoTests=false
+        continue-on-error: false
+
+      - name: Run integration tests
+        run: mvn test -Dtest="**/*IntegrationTest.java" -DfailIfNoTests=false
+        continue-on-error: false

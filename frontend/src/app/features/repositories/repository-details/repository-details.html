@@ -1,0 +1,244 @@
+<div class="container repository-details" *ngIf="repository">
+    <div class="header">
+        <div class="title-section">
+            <p-button icon="pi pi-arrow-left" (onClick)="goBack()" styleClass="p-button-text"></p-button>
+            <div>
+                <h2>{{ getRepositoryDisplayName() }}</h2>
+                <p class="description">{{ repository.description }}</p>
+            </div>
+        </div>
+        <div class="badges">
+            <span *ngIf="repository.isOfficial" class="official-badge">Docker Official Image</span>
+            <span class="visibility-badge" [class.private]="!repository.isPublic">
+                <i [class]="repository.isPublic ? 'pi pi-globe' : 'pi pi-lock'"></i>
+                {{ repository.isPublic ? 'Public' : 'Private' }}
+            </span>
+        </div>
+    </div>
+
+    <div class="stats-bar">
+        <div class="stat">
+            <i class="pi pi-download"></i>
+            <span>{{ formatNumber(repository.numberOfPulls) }} pulls</span>
+        </div>
+        <div class="stat">
+            <i class="pi pi-star"></i>
+            <span>{{ formatNumber(repository.numberOfStars) }} stars</span>
+        </div>
+        <div class="stat">
+            <i class="pi pi-calendar"></i>
+            <span>Created {{ getRelativeTime(repository.createdAt) }}</span>
+        </div>
+        <div class="stat">
+            <i class="pi pi-clock"></i>
+            <span>Updated {{ getRelativeTime(repository.modifiedAt || repository.createdAt) }}</span>
+        </div>
+    </div>
+
+    <div class="tabs">
+        <button 
+            class="tab" 
+            [class.active]="activeTab === 'tags'" 
+            (click)="activeTab = 'tags'">
+            Tags
+        </button>
+        <button 
+            class="tab" 
+            [class.active]="activeTab === 'settings'" 
+            (click)="activeTab = 'settings'">
+            Settings
+        </button>
+    </div>
+
+    <!-- Tags Tab -->
+    <div *ngIf="activeTab === 'tags'" class="tab-content">
+        <div class="tags-header">
+            <h3>Tags</h3>
+            <div class="tags-actions">
+                <p-iconfield iconPosition="left">
+                    <p-inputicon styleClass="pi pi-search" />
+                    <input pInputText placeholder="Search tags..." [(ngModel)]="searchTag" (input)="onSearchTag()" />
+                </p-iconfield>
+                <div class="results-per-page">
+                    <label>Results per page:</label>
+                    <p-select
+                        [options]="pageSizeOptions"
+                        [(ngModel)]="pageSize"
+                        (onChange)="onPageSizeChange()">
+                    </p-select>
+                </div>
+                <p-select 
+                    [options]="sortOptions" 
+                    [(ngModel)]="selectedSort" 
+                    placeholder="Sort by"
+                    (onChange)="onSortChange($event)">
+                </p-select>
+            </div>
+        </div>
+
+        <div class="tags-list">
+            <div *ngFor="let tag of tags" class="container tag-item">
+                <div class="tag-info">
+                    <div class="tag-name">
+                        <i class="pi pi-tag"></i>
+                        <strong>{{ tag.name }}</strong>
+                    </div>
+                    <div class="tag-details">
+                        <span class="digest">{{ tag.digest.substring(0, 19) }}...</span>
+                        <span class="size">{{ formatSize(tag.size) }}</span>
+                        <span class="pushed">Pushed {{ getRelativeTime(tag.pushedAt || tag.createdAt) }}</span>
+                    </div>
+                </div>
+                <div class="tag-actions">
+                    <p-button 
+                        icon="pi pi-trash" 
+                        (onClick)="confirmDeleteTag(tag)" 
+                        styleClass="p-button-text p-button-danger"
+                        pTooltip="Delete tag">
+                    </p-button>
+                </div>
+            </div>
+
+            <div *ngIf="tags.length === 0" class="no-results">
+                <i class="pi pi-tag"></i>
+                <p>No tags found</p>
+                <small>Push your first image using: docker push {{ getRepositoryDisplayName() }}:tag</small>
+            </div>
+        </div>
+
+        <!-- Tags Pagination -->
+        <div class="pagination" *ngIf="totalResults > pageSize">
+        <p-button
+            icon="pi pi-angle-left"
+            (onClick)="previousPage()"
+            [disabled]="currentPage === 0"
+            styleClass="p-button-text">
+        </p-button>
+        <span class="page-info">
+                    Page {{ currentPage + 1 }} of {{ totalPages }}
+                </span>
+        <p-button
+            icon="pi pi-angle-right"
+            (onClick)="nextPage()"
+            [disabled]="currentPage >= totalPages - 1"
+            styleClass="p-button-text">
+        </p-button>
+        </div>
+    </div>
+
+    <!-- Settings Tab -->
+    <div *ngIf="activeTab === 'settings'" class="tab-content">
+        <div class="settings-section">
+            <h3>Repository Settings</h3>
+
+            <form [formGroup]="settingsForm" class="flex flex-column gap-4">
+                <div class="field flex flex-column gap-2">
+                    <label for="settings-description" class="font-bold">Description</label>
+                    <textarea 
+                        pInputText 
+                        id="settings-description" 
+                        formControlName="description" 
+                        rows="3">
+                    </textarea>
+                </div>
+
+                <div class="field flex flex-column gap-2" *ngIf="repository && !repository.isOfficial">
+                    <label class="font-bold">Visibility</label>
+                    <div class="flex gap-3">
+                        <div class="flex align-items-center gap-2">
+                            <input type="radio" id="settings-public" formControlName="isPublic" [value]="true"/>
+                            <label for="settings-public">Public</label>
+                        </div>
+                        <div class="flex align-items-center gap-2">
+                            <input type="radio" id="settings-private" formControlName="isPublic" [value]="false"/>
+                            <label for="settings-private">Private</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-2">
+                    <p-button 
+                        label="Save Changes" 
+                        icon="pi pi-check" 
+                        (onClick)="updateSettings()" 
+                        [loading]="loadingUpdate"
+                        [disabled]="settingsForm.pristine || settingsForm.invalid">
+                    </p-button>
+                    <p-button 
+                        label="Reset" 
+                        icon="pi pi-refresh" 
+                        (onClick)="resetSettings()" 
+                        styleClass="p-button-text"
+                        [disabled]="settingsForm.pristine">
+                    </p-button>
+                </div>
+            </form>
+        </div>
+
+        <div class="danger-zone">
+            <h3>Danger Zone</h3>
+            <div class="container danger-content">
+                <div>
+                    <strong>Delete Repository</strong>
+                    <p>Once you delete a repository, there is no going back. Please be certain.</p>
+                </div>
+                <p-button 
+                    label="Delete Repository" 
+                    icon="pi pi-trash" 
+                    (onClick)="confirmDeleteRepository()" 
+                    severity="danger">
+                </p-button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Tag Confirmation Dialog -->
+<p-dialog
+    header="Delete Tag"
+    [(visible)]="displayDeleteTagDialog"
+    [modal]="true"
+    [style]="{ width: '450px' }"
+    [draggable]="false"
+    [resizable]="false">
+    
+    <p>Are you sure you want to delete tag <strong>{{ tagToDelete?.name }}</strong>?</p>
+    <p class="text-sm">This action cannot be undone.</p>
+
+    <div class="flex justify-content-end gap-2 mt-3">
+        <p-button label="Cancel" icon="pi pi-times" (onClick)="displayDeleteTagDialog = false" styleClass="p-button-text"></p-button>
+        <p-button label="Delete" icon="pi pi-trash" (onClick)="deleteTag()" severity="danger" [loading]="loadingDelete"></p-button>
+    </div>
+</p-dialog>
+
+<!-- Delete Repository Confirmation Dialog -->
+<p-dialog
+    header="Delete Repository"
+    [(visible)]="displayDeleteRepoDialog"
+    [modal]="true"
+    [style]="{ width: '450px' }"
+    [draggable]="false"
+    [resizable]="false">
+    
+    <p>Are you sure you want to delete repository <strong>{{ getRepositoryDisplayName() }}</strong>?</p>
+    <p class="text-sm">This will permanently delete the repository and all its tags. This action cannot be undone.</p>
+    
+    <div class="field flex flex-column gap-2 mt-3">
+        <label for="confirm-name">Please type <strong>{{ repository?.name }}</strong> to confirm:</label>
+        <input pInputText id="confirm-name" [(ngModel)]="confirmDeleteName" />
+    </div>
+
+    <div class="flex justify-content-end gap-2 mt-3">
+        <p-button label="Cancel" icon="pi pi-times" (onClick)="displayDeleteRepoDialog = false; confirmDeleteName = ''" styleClass="p-button-text"></p-button>
+        <p-button 
+            label="Delete Repository" 
+            icon="pi pi-trash" 
+            (onClick)="deleteRepository()" 
+            severity="danger" 
+            [loading]="loadingDelete"
+            [disabled]="confirmDeleteName !== repository?.name">
+        </p-button>
+    </div>
+</p-dialog>
+
+<p-toast></p-toast>
