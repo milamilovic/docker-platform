@@ -19,7 +19,6 @@ export class Interceptor implements HttpInterceptor {
 
 
     const accessToken: any = localStorage.getItem('token');
-    console.log("INTERCEPT");
     if (this.authService.isAccessTokenExpired()){
       this.authService.logOut();
       return EMPTY;

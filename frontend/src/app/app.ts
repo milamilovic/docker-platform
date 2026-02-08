@@ -39,12 +39,9 @@ export class App implements OnInit {
       next: (isInit) => {
         if (isInit) {
           this.displayLockdown.set(false)
-          console.log('Sistem uspešno inicijalizovan');
         }
-        console.error('Greška pri inicijalizaciji');
       },
       error: (err) => {
-        console.error('Greška pri inicijalizaciji', err);
       }
     });
   }
