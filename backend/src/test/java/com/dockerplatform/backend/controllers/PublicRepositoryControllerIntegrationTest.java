@@ -6,7 +6,9 @@ import com.dockerplatform.backend.models.enums.BadgeType;
 import com.dockerplatform.backend.models.enums.UserRole;
 import com.dockerplatform.backend.repositories.RepositoryRepo;
 import com.dockerplatform.backend.repositories.UserRepo;
+import com.dockerplatform.backend.service.CacheService;
 import com.dockerplatform.backend.service.PublicRepositoryService;
+import com.dockerplatform.backend.service.RegistryTokenService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +50,10 @@ class PublicRepositoryControllerIntegrationTest {
     private WebApplicationContext webApplicationContext;
 
     private MockMvc mockMvc;
-
+    @MockitoBean
+    private RegistryTokenService tokenService;
+    @MockitoBean
+    private CacheService cacheService;
     @Autowired
     private PublicRepositoryService publicRepositoryService;
 
