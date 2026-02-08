@@ -5,6 +5,7 @@ import com.dockerplatform.backend.security.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -24,9 +25,12 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-         return http.csrf(customizer -> customizer.disable())
+         return http
+                 .csrf(customizer -> customizer.disable())
+                 .httpBasic(basic -> {})
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/user/register","/auth").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/auth/token").authenticated()
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session ->
