@@ -27,6 +27,9 @@ public class SecurityConfiguration {
          return http.csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/user/register","/auth").permitAll()
+                        .requestMatchers("/analytics/**").hasAuthority("ADMIN")
+                        .requestMatchers("/analytics/logs").hasAuthority("ADMIN")
+                        .requestMatchers("/analytics/logs/export").hasAuthority("ADMIN")
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session ->
