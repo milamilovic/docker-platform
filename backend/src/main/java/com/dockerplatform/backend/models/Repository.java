@@ -3,6 +3,7 @@ package com.dockerplatform.backend.models;
 import java.util.Set;
 import java.util.UUID;
 
+import com.dockerplatform.backend.models.enums.BadgeType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -32,6 +33,9 @@ public class Repository {
     private User owner;
 
     @Column(nullable = false)
+    private String ownerUsername;
+
+    @Column(nullable = false)
     private String description;
 
     @Column(nullable = false, updatable = false)
@@ -48,6 +52,9 @@ public class Repository {
     @Column(nullable = false)
     private boolean isOfficial;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "repository")
+    @Enumerated(EnumType.STRING)
+    private BadgeType badge;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "repository", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Tag> tags;
 }

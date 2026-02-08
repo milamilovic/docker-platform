@@ -189,6 +189,8 @@ public class RepositoryService {
         Repository repository = new Repository();
         repository.setName(dto.getName());
         repository.setOwner(currentUser);
+        repository.setOwnerUsername(currentUser.getUsername());
+        repository.setBadge(currentUser.getBadge());
         repository.setDescription(dto.getDescription());
         repository.setPublic(dto.isPublic());
         repository.setOfficial(dto.isOfficial() && isAdmin());

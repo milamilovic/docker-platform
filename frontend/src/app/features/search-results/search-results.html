@@ -1,0 +1,9 @@
+<div class="base container results">
+    <h3>Search Results</h3>
+    <div class="items">
+        <app-repo-card 
+        *ngFor="let repo of repos" 
+        [repo]="repo">
+        </app-repo-card>
+    </div>
+</div>

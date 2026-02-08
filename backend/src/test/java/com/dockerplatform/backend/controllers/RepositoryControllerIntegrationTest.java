@@ -17,6 +17,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -46,7 +50,7 @@ class RepositoryControllerIntegrationTest {
     private Repository testRepository;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         // Clean up before each test
         repositoryRepo.deleteAll();
         userRepo.deleteAll();
@@ -78,6 +82,7 @@ class RepositoryControllerIntegrationTest {
         testRepository.setName("test-repo");
         testRepository.setDescription("Test repository");
         testRepository.setOwner(testUser);
+        testRepository.setOwnerUsername(testUser.getUsername());
         testRepository.setPublic(true);
         testRepository.setOfficial(false);
         testRepository.setCreatedAt(System.currentTimeMillis());
@@ -86,6 +91,13 @@ class RepositoryControllerIntegrationTest {
         testRepository.setNumberOfStars(0);
         testRepository.setTags(new HashSet<>());
         testRepository = repositoryRepo.save(testRepository);
+
+        Path adminSecret = Paths.get("secrets", "super_admin.txt");
+
+        if (Files.exists(adminSecret)) {
+            Files.delete(adminSecret);
+            System.out.println("Obrisan super_admin.txt - sustav otključan za testove.");
+        }
     }
 
     @Test
@@ -284,6 +296,7 @@ class RepositoryControllerIntegrationTest {
         officialRepo.setName("official-test");
         officialRepo.setDescription("Official test repository");
         officialRepo.setOwner(adminUser);
+        officialRepo.setOwnerUsername(adminUser.getUsername());
         officialRepo.setPublic(true);
         officialRepo.setOfficial(true);
         officialRepo.setCreatedAt(System.currentTimeMillis());
