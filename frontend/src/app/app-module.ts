@@ -24,12 +24,12 @@ import { Hello } from './features/hello/hello';
 import { Navbar } from './core/navbar/navbar';
 import { Home } from './features/home/home';
 import { Sidebar } from './core/sidebar/sidebar';
-import { Register } from './features/register/register';
+import { Register } from './features/users/register/register';
 import { Auth } from './features/auth/auth';
 import {Interceptor} from './features/auth/interceptor';
 import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
 import { RepositoriesModule } from './features/repositories/repositories-module';
-import { Admins } from './features/admins/admins';
+import { Admins } from './features/users/admins/admins';
 import {TableModule} from 'primeng/table';
 import {TagModule} from 'primeng/tag';
 

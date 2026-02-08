@@ -1,6 +1,6 @@
 import {Component, OnInit, signal} from '@angular/core';
-import {UserDto} from '../register/user.model';
-import {UserService} from '../register/user.service';
+import {UserDto} from '../user.model';
+import {UserService} from '../user.service';
 
 @Component({
   selector: 'app-admins',

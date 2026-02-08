@@ -7,7 +7,7 @@ import { RepositoriesList } from './features/repositories/repositories-list/repo
 import { RepositoryDetails } from './features/repositories/repository-details/repository-details';
 import { OfficialRepositories } from './features/repositories/official-repositories/official-repositories';
 import { Home } from './features/home/home';
-import {Admins} from './features/admins/admins';
+import {Admins} from './features/users/admins/admins';
 
 
 const routes: Routes = [
