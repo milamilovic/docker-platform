@@ -1,0 +1,119 @@
+<div class="container official-repositories">
+    <div class="header">
+        <h2>Official Repositories</h2>
+        <p-button label="Create Official Repository" icon="pi pi-plus" (onClick)="showCreateDialog()" />
+    </div>
+
+    <div class="search-filter">
+        <p-iconfield iconPosition="left">
+            <p-inputicon styleClass="pi pi-search" />
+            <input pInputText placeholder="Search official repositories..." [(ngModel)]="searchTerm" (input)="onSearch()" />
+        </p-iconfield>
+        <div class="results-per-page">
+            <label>Results per page:</label>
+            <p-select
+                [options]="pageSizeOptions"
+                [(ngModel)]="pageSize"
+                (onChange)="onPageSizeChange()">
+            </p-select>
+        </div>
+        <p-select 
+            [options]="sortOptions" 
+            [(ngModel)]="selectedSort" 
+            placeholder="Sort by"
+            (onChange)="onSortChange($event)">
+        </p-select>
+    </div>
+
+    <div class="repositories-list">
+        <div *ngFor="let repo of repositories" class="container repository-item" (click)="viewDetails(repo.id)">
+            <div class="repo-header">
+                <div class="repo-name">
+                    <h3>{{ repo.name }}</h3>
+                    <span class="official-badge">Docker Official Image</span>
+                </div>
+            </div>
+            <p class="description">{{ repo.description }}</p>
+            <div class="repo-stats">
+                <span><i class="pi pi-download"></i> {{ formatNumber(repo.numberOfPulls) }} pulls</span>
+                <span><i class="pi pi-star"></i> {{ formatNumber(repo.numberOfStars) }} stars</span>
+                <span><i class="pi pi-user"></i> Maintained by {{ repo.ownerUsername }}</span>
+                <span><i class="pi pi-calendar"></i> Updated {{ getRelativeTime(repo.modifiedAt || repo.createdAt) }}</span>
+            </div>
+        </div>
+
+        <div *ngIf="repositories.length === 0 && !loading" class="no-results">
+            <i class="pi pi-inbox"></i>
+            <p>No official repositories found</p>
+        </div>
+
+        <div *ngIf="loading" class="no-results">
+            <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
+            <p>Loading repositories...</p>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="totalResults > pageSize">
+      <p-button
+        icon="pi pi-angle-left"
+        (onClick)="previousPage()"
+        [disabled]="currentPage === 0"
+        styleClass="p-button-text">
+      </p-button>
+      <span class="page-info">
+                Page {{ currentPage + 1 }} of {{ totalPages }}
+            </span>
+      <p-button
+        icon="pi pi-angle-right"
+        (onClick)="nextPage()"
+        [disabled]="currentPage >= totalPages - 1"
+        styleClass="p-button-text">
+      </p-button>
+    </div>
+</div>
+
+<!-- Create Official Repository Dialog -->
+<p-dialog
+    header="Create Official Repository"
+    [(visible)]="displayCreateDialog"
+    [modal]="true"
+    [style]="{ width: '500px' }"
+    [draggable]="false"
+    [resizable]="false"
+    (onHide)="createForm.reset()">
+
+    <form [formGroup]="createForm" (ngSubmit)="onCreate()" class="flex flex-column gap-4 p-fluid mt-2">
+
+        <div class="field flex flex-column gap-2">
+            <label for="name" class="font-bold">Repository Name</label>
+            <input pInputText id="name" formControlName="name" placeholder="nginx" />
+            <small>Official repositories do not have a prefix (e.g., "nginx" instead of "user/nginx")</small>
+            <small class="p-error" *ngIf="createForm.get('name')?.invalid && createForm.get('name')?.touched">
+                Repository name is required (min. 3 characters, lowercase, alphanumeric and hyphens only).
+            </small>
+        </div>
+
+        <div class="field flex flex-column gap-2">
+            <label for="description" class="font-bold">Description</label>
+            <textarea pInputText id="description" formControlName="description" placeholder="Brief description of the official image" rows="3"></textarea>
+            <small class="p-error" *ngIf="createForm.get('description')?.invalid && createForm.get('description')?.touched">
+                Description is required.
+            </small>
+        </div>
+
+        <div class="info-box">
+            <i class="pi pi-info-circle"></i>
+            <div>
+                <strong>Note:</strong> Official repositories are always public and will be marked with the "Docker Official Image" badge.
+            </div>
+        </div>
+
+        <div class="flex justify-content-end gap-2 mt-3">
+            <p-button label="Cancel" icon="pi pi-times" (onClick)="hideCreateDialog()" styleClass="p-button-text"></p-button>
+            <p-button label="Create" icon="pi pi-check" type="submit" [loading]="loading" [disabled]="createForm.invalid"></p-button>
+        </div>
+    </form>
+</p-dialog>
+
+<p-toast></p-toast>

@@ -4,3 +4,4 @@
 postgres_data
 backend/logs
 secrets/
+frontend/nginx.conf
