@@ -36,9 +36,12 @@ public class SecurityConfiguration {
                  .csrf(customizer -> customizer.disable())
                  .httpBasic(basic -> {})
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/user/register","/auth", "/public/**").permitAll()
+                        .requestMatchers("/user/register","/auth/**", "/public/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/registry/events").permitAll()
                         .requestMatchers(HttpMethod.GET, "/auth/token").authenticated()
+                        .requestMatchers("/analytics/**").hasAuthority("ADMIN")
+                        .requestMatchers("/analytics/logs").hasAuthority("ADMIN")
+                        .requestMatchers("/analytics/logs/export").hasAuthority("ADMIN")
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated())
                  .sessionManagement(session ->

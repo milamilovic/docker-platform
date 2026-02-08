@@ -1,5 +1,6 @@
 package com.dockerplatform.backend.configs;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.data.web.SortHandlerMethodArgumentResolver;
@@ -7,6 +8,7 @@ import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
@@ -15,6 +17,10 @@ import java.util.List;
 @EnableWebMvc
 @EnableSpringDataWebSupport
 public class WebConfig implements WebMvcConfigurer {
+
+    @Autowired
+    private LoggingInterceptor loggingInterceptor;
+
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**").
@@ -35,5 +41,11 @@ public class WebConfig implements WebMvcConfigurer {
         pageableResolver.setSizeParameterName("size");
 
         resolvers.add(pageableResolver);
+    }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(loggingInterceptor)
+                .addPathPatterns("/**");
     }
 }

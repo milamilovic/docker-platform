@@ -13,8 +13,8 @@ import { AvatarModule } from 'primeng/avatar';
 import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { PasswordModule } from 'primeng/password';
-import { SelectModule } from 'primeng/select';
 import { CheckboxModule } from 'primeng/checkbox';
+import { SelectModule } from 'primeng/select';
 
 // import { AvatarGroupModule } from 'primeng/avatargroup';
 
@@ -31,6 +31,7 @@ import { Interceptor } from './features/auth/interceptor';
 import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { RepoCard } from './shared/components/repo-card/repo-card';
 import { SearchResults } from './features/search-results/search-results';
+import { AnalyticsModule } from './features/analytics/analytics.module';
 import { RepositoriesModule } from './features/repositories/repositories-module';
 import { Admins } from './features/users/admins/admins';
 import {TableModule} from 'primeng/table';
@@ -63,7 +64,9 @@ import { Profile } from './features/users/profile/profile';
     ReactiveFormsModule,
     ToastModule,
     PasswordModule,
+    AnalyticsModule,
     CheckboxModule,
+    // AvatarGroupModule
     RepositoriesModule,
     SelectModule,
     FormsModule,
