@@ -84,6 +84,9 @@ services:
       - "LOGSTASH_TCP_PORT=${LOGSTASH_TCP_PORT}"
       - "BATCH_SIZE=${BATCH_SIZE}"
       - "BATCH_DELAY=${BATCH_DELAY}"
+      - "REGISTRY_JWT_ISSUER=${REGISTRY_JWT_ISSUER}"
+      - "REGISTRY_JWT_KEY_ID=${REGISTRY_JWT_KEY_ID}"
+      - "REGISTRY_JWT_PRIVATE_KEY_PATH=${REGISTRY_JWT_PRIVATE_KEY_PATH}"
     volumes:
       - ./registry-auth/registry-private.pem:/app/registry-private.pem:ro
     depends_on:
