@@ -12,4 +12,6 @@ export interface Repository {
 
   createdAt: number;    
   modifiedAt: number;    
+
+  badge: string; 
 }

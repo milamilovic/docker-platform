@@ -60,33 +60,6 @@
     font-size: 1.25rem;
 }
 
-.official-badge {
-    background: var(--p-blue-600);
-    color: black;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: bold;
-}
-
-.verified-badge {
-    background: var(--p-emerald-600);
-    color: black;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: bold;
-}
-
-.sponsored-badge {
-    background: var(--p-purple-500);
-    color: black;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: bold;
-}
-
 .description {
     color: var(--p-zinc-400);
     margin: 0.5rem 0;

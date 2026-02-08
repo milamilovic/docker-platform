@@ -24,7 +24,8 @@ public interface PublicRepositoryRepo extends JpaRepository<Repository, UUID>, J
             r.numberOfStars,
             r.isOfficial,
             r.createdAt,
-            r.modifiedAt
+            r.modifiedAt, 
+            r.badge
         )
         FROM Repository r
         WHERE r.isPublic = true
@@ -42,7 +43,8 @@ public interface PublicRepositoryRepo extends JpaRepository<Repository, UUID>, J
             r.numberOfStars,
             r.isOfficial,
             r.createdAt, 
-            r.modifiedAt
+            r.modifiedAt, 
+            r.badge
         )
         FROM Repository r
         WHERE r.isPublic = true

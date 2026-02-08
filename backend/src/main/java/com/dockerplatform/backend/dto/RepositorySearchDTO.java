@@ -1,6 +1,7 @@
 package com.dockerplatform.backend.dto;
 
 import com.dockerplatform.backend.models.Repository;
+import com.dockerplatform.backend.models.enums.BadgeType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,7 @@ public class RepositorySearchDTO {
 
     private Long createdAt;
     private Long modifiedAt;
+    private BadgeType badge;
 
     public static RepositorySearchDTO from(Repository repo) {
         RepositorySearchDTO dto = new RepositorySearchDTO();
@@ -38,6 +40,7 @@ public class RepositorySearchDTO {
         dto.setOfficial(repo.isOfficial());
         dto.setCreatedAt(repo.getCreatedAt());
         dto.setModifiedAt(repo.getCreatedAt());
+        dto.setBadge(repo.getBadge());
         return dto;
     }
 }

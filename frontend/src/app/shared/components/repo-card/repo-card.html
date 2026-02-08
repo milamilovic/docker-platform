@@ -3,9 +3,12 @@
         <img src="assets/logo-docker.svg" alt="Logo"/>
         <div class="top-stat">
             <p *ngIf="!repo.official" class="card-title">{{repo.ownerUsername}}/{{repo.name}}</p>
-            <p *ngIf="!repo.official" class="card-owner">{{repo.ownerUsername}}</p>
             <p *ngIf="repo.official" class="card-title">{{repo.name}}</p>
-            <p *ngIf="repo.official" class="card-owner">Docker Official Images</p>
+            <div>
+                <span *ngIf="repo.badge=='DOCKER_OFFICIAL_IMAGE'" class="official-badge">Docker Official Image</span>
+                <span *ngIf="repo.badge=='VERIFIED_PUBLISHER'" class="verified-badge">Verified Publisher</span>
+                <span *ngIf="repo.badge=='SPONSORED_OSS'" class="sponsored-badge">Sponsored OSS</span>
+            </div>
         </div>
     </div>
     <div class="mid-stat stat-text">
