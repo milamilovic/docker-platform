@@ -285,6 +285,7 @@ class RepositoryControllerIntegrationTest {
         officialRepo.setName("official-test");
         officialRepo.setDescription("Official test repository");
         officialRepo.setOwner(adminUser);
+        officialRepo.setOwnerUsername(adminUser.getUsername());
         officialRepo.setPublic(true);
         officialRepo.setOfficial(true);
         officialRepo.setCreatedAt(System.currentTimeMillis());
