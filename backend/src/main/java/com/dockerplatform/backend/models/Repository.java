@@ -55,6 +55,6 @@ public class Repository {
     @Enumerated(EnumType.STRING)
     private BadgeType badge;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "repository")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "repository", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Tag> tags;
 }
