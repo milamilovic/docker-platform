@@ -1,5 +1,6 @@
 .vscode/
 .env
+.idea/
 postgres_data
 backend/logs
 secrets/
