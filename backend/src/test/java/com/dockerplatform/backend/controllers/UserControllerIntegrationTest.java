@@ -15,6 +15,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import static org.hamcrest.Matchers.is;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -37,13 +42,19 @@ class UserControllerIntegrationTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         userRepo.deleteAll();
 
         this.mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
                 .apply(springSecurity())
                 .build();
+        Path adminSecret = Paths.get("secrets", "super_admin.txt");
+
+        if (Files.exists(adminSecret)) {
+            Files.delete(adminSecret);
+            System.out.println("Obrisan super_admin.txt - sustav otključan za testove.");
+        }
     }
 
     @Test

@@ -18,6 +18,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 
 import static org.hamcrest.Matchers.*;
@@ -49,7 +53,7 @@ class TagControllerIntegrationTest {
     private Tag testTag;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         // Clean up before each test
         tagRepo.deleteAll();
         repositoryRepo.deleteAll();
@@ -93,6 +97,13 @@ class TagControllerIntegrationTest {
         testTag.setPushedAt(System.currentTimeMillis());
         testTag.setRepository(testRepository);
         testTag = tagRepo.save(testTag);
+
+        Path adminSecret = Paths.get("secrets", "super_admin.txt");
+
+        if (Files.exists(adminSecret)) {
+            Files.delete(adminSecret);
+            System.out.println("Obrisan super_admin.txt - sustav otključan za testove.");
+        }
     }
 
     @Test
