@@ -12,6 +12,7 @@ on:
 
 jobs:
   test:
+    name: Run Tests
     runs-on: ubuntu-latest
 
     services:
@@ -56,10 +57,35 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Run tests
+      - name: Wait for PostgreSQL to be ready
+        run: |
+          for i in {1..30}; do
+            if pg_isready -h localhost -p 5432 -U postgres; then
+              echo "PostgreSQL is ready!"
+              break
+            fi
+            echo "Waiting for PostgreSQL... ($i/30)"
+            sleep 2
+          done
+
+      - name: Verify PostgreSQL connection
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d dockerplatform -c "SELECT version();"
+
+      - name: Build backend
+        run: mvn clean compile -DskipTests
+
+      - name: Run unit tests
+        run: mvn test -Dtest="**/*Test.java,!**/*IntegrationTest.java" -DfailIfNoTests=false
+
+      - name: Run integration tests
+        run: mvn test -Dtest="**/*IntegrationTest.java" -DfailIfNoTests=false
+
+      - name: Run all tests (full suite)
         run: mvn test
 
   build-and-push:
+    name: Build and Push Docker Image
     needs: test
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
