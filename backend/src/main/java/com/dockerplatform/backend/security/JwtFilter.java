@@ -27,13 +27,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+        throws ServletException, IOException {
 
 //        if (request.getRequestURL().toString().contains("**")){
 
 //            System.out.println("---- Method:" +request.getMethod()+"  URL: "+request.getRequestURL());
-//            System.out.println("---- Authrization: " + request.getHeader("Authorization"));
-            String header = request.getHeader("Authorization");
+//            System.out.println("---- Authrization: " + request.getHeader("Authorization:"));
+            String header = request.getHeader("Authorization:");
             String username = null;
             String jwtToken = null;
 

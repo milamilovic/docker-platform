@@ -10,6 +10,7 @@ export interface Repository {
   numberOfStars: number;
   isPublic: boolean;
   isOfficial: boolean;
+  badge?: string; 
 }
 
 export interface RepositoryDto {
