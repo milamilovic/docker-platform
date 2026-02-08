@@ -21,6 +21,7 @@ class RegistryTagSyncServiceTest {
 
     @Mock private RepositoryRepo repositoryRepo;
     @Mock private TagRepo tagRepo;
+    @Mock private CacheService cacheService;
 
     @InjectMocks
     private RegistryTagSyncService service;
