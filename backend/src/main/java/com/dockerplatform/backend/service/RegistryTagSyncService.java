@@ -6,6 +6,7 @@ import com.dockerplatform.backend.models.Tag;
 import com.dockerplatform.backend.repositories.RepositoryRepo;
 import com.dockerplatform.backend.repositories.TagRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
@@ -17,6 +18,9 @@ public class RegistryTagSyncService {
     private RepositoryRepo repositoryRepo;
     @Autowired
     private TagRepo tagRepo;
+
+    @Autowired
+    private CacheService cacheService;
 
     @Transactional
     public void handleNotification(RegistryNotification payload) {
@@ -95,5 +99,6 @@ public class RegistryTagSyncService {
         tag.setPushedAt(now);
 
         tagRepo.save(tag);
+        cacheService.clearAllCaches();
     }
 }
