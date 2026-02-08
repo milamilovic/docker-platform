@@ -32,6 +32,7 @@ import { RepositoriesModule } from './features/repositories/repositories-module'
 import { Admins } from './features/users/admins/admins';
 import {TableModule} from 'primeng/table';
 import {TagModule} from 'primeng/tag';
+import { Profile } from './features/users/profile/profile';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import {TagModule} from 'primeng/tag';
     Register,
     Auth,
     Admins,
+    Profile,
   ],
     imports: [
         BrowserModule,

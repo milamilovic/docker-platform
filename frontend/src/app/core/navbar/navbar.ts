@@ -10,10 +10,13 @@ import {AuthService} from '../../features/auth/auth.service';
 export class Navbar implements OnInit {
     constructor(protected authService: AuthService) {}
     isLoggedIn = false;
+    showProfile: boolean = false;
     ngOnInit(): void {
           this.authService.loggedIn$.subscribe(loggedIn => {
             this.isLoggedIn = loggedIn;
           })
     }
+
+  onVisibleChange(event: boolean) {this.showProfile = event;}
 
 }
