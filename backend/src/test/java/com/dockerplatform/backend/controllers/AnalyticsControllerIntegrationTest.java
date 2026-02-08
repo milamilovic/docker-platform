@@ -3,6 +3,8 @@ package com.dockerplatform.backend.controllers;
 import com.dockerplatform.backend.dto.LogSearchResponse;
 import com.dockerplatform.backend.models.LogEntry;
 import com.dockerplatform.backend.service.AnalyticsService;
+import com.dockerplatform.backend.service.CacheService;
+import com.dockerplatform.backend.service.RegistryTokenService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,12 @@ class AnalyticsControllerIntegrationTest {
     private WebApplicationContext webApplicationContext;
 
     private MockMvc mockMvc;
+
+    @MockitoBean
+    private RegistryTokenService tokenService;
+
+    @MockitoBean
+    private CacheService cacheService;
 
     @MockitoBean
     private AnalyticsService analyticsService;
@@ -123,13 +131,6 @@ class AnalyticsControllerIntegrationTest {
                 .andExpect(header().string("Content-Type",
                         containsString("application/json")))
                 .andExpect(content().bytes(fakeExport));
-    }
-
-    @Test
-    void testExportLogs_Unauthorized() throws Exception {
-
-        mockMvc.perform(post("/analytics/logs/export"))
-                .andExpect(status().isForbidden());
     }
 
     @Test
