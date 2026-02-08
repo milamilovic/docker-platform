@@ -1,7 +1,7 @@
 import {Component, OnInit, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import { env } from './shared/env';
-import {AuthService} from './features/auth/auth.service';
+import {AuthService,ChPassword} from './features/auth/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -12,6 +12,11 @@ import {AuthService} from './features/auth/auth.service';
 export class App implements OnInit {
   protected readonly title = signal('frontend');
   displayLockdown = signal(false);
+  setupData:ChPassword = {
+    newPassword: '',
+    password: '',
+    username: ''
+  };
 
   constructor(private http: HttpClient, private auth: AuthService) {}
 
@@ -28,17 +33,15 @@ export class App implements OnInit {
     });
   }
 
-  setupData = {
-    username: '',
-    oldPassword: '',
-    newPassword: ''
-  };
 
   submitSetup() {
-    this.http.post(`${env.apiUrl}/auth/initialize`, this.setupData).subscribe({
-      next: () => {
-        this.displayLockdown.set(false)
-        console.log('Sistem uspešno inicijalizovan');
+    this.auth.initSystem(this.setupData).subscribe({
+      next: (isInit) => {
+        if (isInit) {
+          this.displayLockdown.set(false)
+          console.log('Sistem uspešno inicijalizovan');
+        }
+        console.error('Greška pri inicijalizaciji');
       },
       error: (err) => {
         console.error('Greška pri inicijalizaciji', err);

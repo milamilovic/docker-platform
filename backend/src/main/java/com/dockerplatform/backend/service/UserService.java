@@ -1,17 +1,11 @@
 package com.dockerplatform.backend.service;
 
-import com.dockerplatform.backend.dto.AuthRequest;
+import com.dockerplatform.backend.dto.ChangePasswordRequest;
 import com.dockerplatform.backend.dto.UserDto;
 import com.dockerplatform.backend.models.User;
 import com.dockerplatform.backend.models.enums.UserRole;
 import com.dockerplatform.backend.repositories.UserRepo;
-import com.dockerplatform.backend.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -45,5 +39,22 @@ public class UserService  {
 
         return  Optional.of(save);
     }
-    
+
+    public boolean changePassword(ChangePasswordRequest request) {
+        Optional<User> userOptional = userRepo.findByUsername(request.username());
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+
+            if (bCryptPasswordEncoder.matches(request.password(), user.getPassword())) {
+
+                user.setPassword(bCryptPasswordEncoder.encode(request.newPassword()));
+                userRepo.save(user);
+
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

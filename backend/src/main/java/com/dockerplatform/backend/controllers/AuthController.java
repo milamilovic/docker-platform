@@ -2,6 +2,7 @@ package com.dockerplatform.backend.controllers;
 
 import com.dockerplatform.backend.dto.AuthRequest;
 import com.dockerplatform.backend.dto.AuthResponse;
+import com.dockerplatform.backend.dto.ChangePasswordRequest;
 import com.dockerplatform.backend.exceptions.PasswordChangeRequiredException;
 import com.dockerplatform.backend.service.AuthService;
 import jakarta.validation.Valid;
@@ -32,6 +33,14 @@ public class AuthController {
     @GetMapping("/status")
     public ResponseEntity<Boolean> getSystemStatus() {
         return ResponseEntity.ok(service.isSystemLocked());
+    }
+
+    @PostMapping("/initialize")
+    public ResponseEntity<Boolean> initializeSystem(@RequestBody ChangePasswordRequest request) {
+        if (service.initializeSystem(request)){
+            return ResponseEntity.ok(true);
+        }
+        return ResponseEntity.ok(false);
     }
 
 }
