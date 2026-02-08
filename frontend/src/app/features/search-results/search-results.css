@@ -1,0 +1,14 @@
+.results {
+    width: 100%;
+    overflow-x: hidden;
+}
+
+.items {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+}
+

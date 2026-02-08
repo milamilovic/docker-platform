@@ -15,11 +15,10 @@ import { ToastModule } from 'primeng/toast';
 import { PasswordModule } from 'primeng/password';
 import { CheckboxModule } from 'primeng/checkbox';
 import { SelectModule } from 'primeng/select';
-import { FormsModule } from '@angular/forms';
 
 // import { AvatarGroupModule } from 'primeng/avatargroup';
 
-import { ReactiveFormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { Hello } from './features/hello/hello';
@@ -28,8 +27,10 @@ import { Home } from './features/home/home';
 import { Sidebar } from './core/sidebar/sidebar';
 import { Register } from './features/register/register';
 import { Auth } from './features/auth/auth';
-import {Interceptor} from './features/auth/interceptor';
-import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
+import { Interceptor } from './features/auth/interceptor';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { RepoCard } from './shared/components/repo-card/repo-card';
+import { SearchResults } from './features/search-results/search-results';
 import { AnalyticsModule } from './features/analytics/analytics.module';
 import { RepositoriesModule } from './features/repositories/repositories-module';
 
@@ -42,6 +43,8 @@ import { RepositoriesModule } from './features/repositories/repositories-module'
     Sidebar,
     Register,
     Auth,
+    RepoCard,
+    SearchResults,
   ],
   imports: [
     BrowserModule,

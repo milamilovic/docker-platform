@@ -15,6 +15,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import static org.hamcrest.Matchers.*;
@@ -37,11 +41,17 @@ class AnalyticsControllerIntegrationTest {
     private AnalyticsService analyticsService;
 
     @BeforeEach
-    void setup() {
+    void setup() throws IOException {
         this.mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
                 .apply(springSecurity())
                 .build();
+
+        Path adminSecret = Paths.get("secrets", "super_admin.txt");
+
+        if (Files.exists(adminSecret)) {
+            Files.delete(adminSecret);
+        }
     }
 
     @Test

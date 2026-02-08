@@ -6,6 +6,11 @@ import { jwtDecode } from 'jwt-decode';
 import {isPlatformBrowser} from '@angular/common';
 import {ActivatedRoute, Router} from '@angular/router';
 
+export interface ChPassword {
+  username: string;
+  password: string;
+  newPassword: string;
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -38,6 +43,12 @@ export class AuthService {
     localStorage.clear();
     this.loggedIn$.next(false);
     this.router.navigate(['']);
+  }
+  status(): Observable<boolean> {
+    return this.http.get<boolean>(`${ this.API_URL }/status`)
+  }
+  initSystem(chPassword: ChPassword): Observable<boolean> {
+    return this.http.post<boolean>(`${ this.API_URL }/initialize`, chPassword);
   }
 
   isLoggedIn(): boolean {

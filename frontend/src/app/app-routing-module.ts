@@ -1,16 +1,22 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import {Hello} from './features/hello/hello';
-import {AuthGuard} from './features/auth/auth.guard';
+import { Hello } from './features/hello/hello';
+import { AuthGuard } from './features/auth/auth.guard';
 import { Analytics } from './features/analytics/analytics/analytics';
+import { SearchResults } from './features/search-results/search-results';
 import { RepositoriesList } from './features/repositories/repositories-list/repositories-list';
 import { RepositoryDetails } from './features/repositories/repository-details/repository-details';
 import { OfficialRepositories } from './features/repositories/official-repositories/official-repositories';
 import { Home } from './features/home/home';
+import { PublicRepositoriesList } from './features/repositories/public-repositories-list/public-repositories-list';
 
 
 const routes: Routes = [
   { path: '', component: Home},
+  { path: 'search', component: SearchResults},
+  { path: 'public/official-repositories', component: PublicRepositoriesList, data: { badge:'DOCKER_OFFICIAL_IMAGE' }},
+  { path: 'public/verified-repositories', component: PublicRepositoriesList, data: { badge:'VERIFIED_PUBLISHER' }},
+  { path: 'public/sponsored-repositories', component: PublicRepositoriesList, data: { badge:'SPONSORED_OSS' }},
   { path: 'hello', component: Hello, canActivate: [AuthGuard], data: { role: ['REGULAR']} },
   { path: 'analytics', component: Analytics, canActivate: [AuthGuard], data: { role: ['ADMIN'] } },
   { path: 'repositories', component: RepositoriesList, canActivate: [AuthGuard], data: { role: ['REGULAR', 'ADMIN'] } },

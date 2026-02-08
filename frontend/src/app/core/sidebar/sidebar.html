@@ -1,7 +1,24 @@
 <div class="container sidebar">
+  <h3>Menu Options</h3>
+
   <p>
     <a routerLink="" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
       <i class="pi pi-home"></i> Home
+    </a>
+  </p>
+  <p>
+    <a routerLink="public/official-repositories" routerLinkActive="active">
+      <i class="pi pi-box"></i> Docker Official
+    </a>
+  </p>
+  <p>
+    <a routerLink="public/verified-repositories" routerLinkActive="active">
+      <i class="pi pi-box"></i> Verified Publisher
+    </a>
+  </p>
+  <p>
+    <a routerLink="public/sponsored-repositories" routerLinkActive="active">
+      <i class="pi pi-box"></i> Sponsored OSS
     </a>
   </p>
   <p *ngIf="isLoggedIn()">
@@ -19,4 +36,5 @@
       <i class="pi pi-clipboard"></i> Analytics
     </a>
   </p>
+
 </div>

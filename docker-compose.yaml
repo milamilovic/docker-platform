@@ -84,6 +84,8 @@ services:
       - "LOGSTASH_TCP_PORT=${LOGSTASH_TCP_PORT}"
       - "BATCH_SIZE=${BATCH_SIZE}"
       - "BATCH_DELAY=${BATCH_DELAY}"
+    volumes:
+      - ./secrets:/app/secrets
     depends_on:
       - database
       - redis

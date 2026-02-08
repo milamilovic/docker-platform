@@ -14,12 +14,14 @@ import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { SelectModule } from 'primeng/select';
 import { PaginatorModule } from 'primeng/paginator';
+import { PublicRepositoriesList } from './public-repositories-list/public-repositories-list';
 
 @NgModule({
   declarations: [
     RepositoriesList,
     RepositoryDetails,
-    OfficialRepositories
+    OfficialRepositories,
+    PublicRepositoriesList
   ],
   imports: [
     CommonModule,
@@ -37,7 +39,8 @@ import { PaginatorModule } from 'primeng/paginator';
   exports: [
     RepositoriesList,
     RepositoryDetails,
-    OfficialRepositories
+    OfficialRepositories,
+    PublicRepositoriesList
   ]
 })
 export class RepositoriesModule { }
