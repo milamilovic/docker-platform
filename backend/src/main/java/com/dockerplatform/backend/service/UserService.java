@@ -1,5 +1,6 @@
 package com.dockerplatform.backend.service;
 
+import com.dockerplatform.backend.dto.ChangePasswordRequest;
 import com.dockerplatform.backend.dto.UserDto;
 import com.dockerplatform.backend.models.User;
 import com.dockerplatform.backend.models.enums.UserRole;
@@ -38,5 +39,22 @@ public class UserService  {
 
         return  Optional.of(save);
     }
-    
+
+    public boolean changePassword(ChangePasswordRequest request) {
+        Optional<User> userOptional = userRepo.findByUsername(request.username());
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+
+            if (bCryptPasswordEncoder.matches(request.password(), user.getPassword())) {
+
+                user.setPassword(bCryptPasswordEncoder.encode(request.newPassword()));
+                userRepo.save(user);
+
+                return true;
+            }
+        }
+
+        return false;
+    }
 }
