@@ -31,8 +31,16 @@ public class UserController {
 
     @GetMapping("/admins")
     @PreAuthorize("hasRole('SUPER_ADMIN')")
-    public ResponseEntity<List<?>> getUser(){
-        return ResponseEntity.ok(userService.getAdmins());
+    public ResponseEntity<List<UserDto>> getUser(){
+        List<UserDto> userDtos = userService.getAdmins().stream()
+                .map(user -> {
+                    UserDto dto = new UserDto();
+                    dto.setEmail(user.getEmail());
+                    dto.setUsername(user.getUsername());
+                    return dto;
+                })
+                .toList();
+        return ResponseEntity.ok(userDtos);
     }
 
     @PostMapping("/admins")

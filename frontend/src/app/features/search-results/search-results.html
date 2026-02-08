@@ -1,0 +1,37 @@
+<div class="base container results">
+    <h3>Search Results</h3>
+    <div *ngIf="repos.length != 0" class="items">
+        <app-repo-card 
+        *ngFor="let repo of repos" 
+        [repo]="repo">
+        </app-repo-card>
+    </div>
+
+    <div *ngIf="repos.length === 0 && !loading" class="no-results">
+        <i class="pi pi-inbox"></i>
+        <p>No repositories found</p>
+    </div>
+
+    <div *ngIf="loading" class="no-results">
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
+        <p>Loading repositories...</p>
+    </div>
+
+    <div class="pagination" *ngIf="pageInfo!.totalElements > pageInfo!.size">
+      <p-button
+        icon="pi pi-angle-left"
+        (onClick)="previousPage()"
+        [disabled]="currentPage === 0"
+        styleClass="p-button-text">
+      </p-button>
+      <span class="page-info">
+                Page {{ currentPage + 1 }} of {{ pageInfo!.totalPages }}
+            </span>
+      <p-button
+        icon="pi pi-angle-right"
+        (onClick)="nextPage()"
+        [disabled]="currentPage >= pageInfo!.totalPages - 1"
+        styleClass="p-button-text">
+      </p-button>
+    </div>
+</div>

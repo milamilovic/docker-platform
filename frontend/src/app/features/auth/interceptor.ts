@@ -23,7 +23,6 @@ export class Interceptor implements HttpInterceptor {
       this.authService.logOut();
       return EMPTY;
     }
-    // if (req.headers.get('skip')) return handler.handle(req);
 
     if (accessToken) {
       const cloned = req.clone({

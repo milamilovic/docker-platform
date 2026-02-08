@@ -14,3 +14,24 @@ body, .p-component {
 p-inputtext, p-select {
     width: 200px;
 }
+
+.official-badge, .verified-badge, .sponsored-badge {
+    background: var(--p-blue-600);
+    color: black;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+.official-badge {
+    background: var(--p-blue-600);
+}
+
+.verified-badge {
+    background: var(--p-emerald-600);
+}
+
+.sponsored-badge {
+    background: var(--p-purple-500);
+}

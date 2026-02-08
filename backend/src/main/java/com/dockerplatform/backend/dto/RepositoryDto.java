@@ -1,6 +1,7 @@
 package com.dockerplatform.backend.dto;
 
 import com.dockerplatform.backend.models.Repository;
+import com.dockerplatform.backend.models.enums.BadgeType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,6 +26,7 @@ public class RepositoryDto {
     private boolean isPublic;
     @JsonProperty("isOfficial")
     private boolean isOfficial;
+    private BadgeType badge;
 
     public static RepositoryDto toResponseDto(Repository repository) {
         RepositoryDto dto = new RepositoryDto();
@@ -39,6 +41,7 @@ public class RepositoryDto {
         dto.setNumberOfStars(repository.getNumberOfStars());
         dto.setPublic(repository.isPublic());
         dto.setOfficial(repository.isOfficial());
+        dto.setBadge(repository.getBadge());
         return dto;
     }
 }

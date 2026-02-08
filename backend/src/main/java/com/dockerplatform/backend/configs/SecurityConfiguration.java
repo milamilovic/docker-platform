@@ -6,6 +6,7 @@ import com.dockerplatform.backend.security.SystemLockdownFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
@@ -16,6 +17,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.config.Customizer;
 
 @Configuration
 @EnableWebSecurity
@@ -29,13 +31,17 @@ public class SecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-         return http.cors(Customizer.withDefaults())
+         return http
+                 .cors(Customizer.withDefaults())
                  .csrf(customizer -> customizer.disable())
+                 .httpBasic(basic -> {})
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/user/register","/auth/**").permitAll()
+                        .requestMatchers("/user/register","/auth", "/public/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/registry/events").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/auth/token").authenticated()
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated())
-                .sessionManagement(session ->
+                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                  .addFilterBefore(lockdownFilter, UsernamePasswordAuthenticationFilter.class)
                  .addFilterBefore(jwtFilter, SystemLockdownFilter.class)
@@ -57,7 +63,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfiguration) throws Exception{
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfiguration) throws Exception {
         return authConfiguration.getAuthenticationManager();
     }
 }
