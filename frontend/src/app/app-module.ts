@@ -14,7 +14,6 @@ import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { PasswordModule } from 'primeng/password';
 import { SelectModule } from 'primeng/select';
-import { FormsModule } from '@angular/forms';
 import { CheckboxModule } from 'primeng/checkbox';
 
 // import { AvatarGroupModule } from 'primeng/avatargroup';
