@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Repository } from '../../models/repository';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-repo-card',
@@ -10,6 +11,8 @@ import { Repository } from '../../models/repository';
 })
 export class RepoCard {
     @Input() repo!: Repository; 
+
+    constructor(private router: Router) {}
 
     formatCount(count: number): string {
       if (count >= 1_000_000) {
@@ -50,4 +53,8 @@ export class RepoCard {
             return `about ${years} year${years > 1 ? 's' : ''}`;
         }
     }
+
+    // viewDetails(): void {
+    //  this.router.navigate(['/repositories', this.repo.id]);
+    // }
 }

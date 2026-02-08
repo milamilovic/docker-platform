@@ -1,41 +1,21 @@
 <div class="container sidebar">
-    <!-- <p>Sidebar menu </p> -->
-    <h3>Search Filters</h3>
+    <h3>Menu Options</h3>
 
-    <div [formGroup]="filtersForm" class="filters">
-        <div class="filter-row">
-            <p-checkbox
-                inputId="official"
-                formControlName="isOfficial"
-                [binary]="true"
-            ></p-checkbox>
-            <label for="official">
-                Docker Official Image
-            </label>
-        </div>
-
-        <div class="filter-row">
-            <p-checkbox
-                inputId="verified"
-                formControlName="isVerified"
-                [binary]="true"
-            ></p-checkbox>
-            <label for="verified">
-                Verified Publisher
-            </label>
-        </div>
-
-        <div class="filter-row">
-            <p-checkbox
-                inputId="sponsored"
-                formControlName="isSponsored"
-                [binary]="true"
-            ></p-checkbox>
-            <label for="sponsored">
-                Sponsored OSS
-            </label>
-        </div>
-    </div>
+    <p>
+        <a routerLink="public/official-repositories" routerLinkActive="active">
+            <i class="pi pi-box"></i> Docker Official 
+        </a>
+    </p>
+    <p>
+        <a routerLink="public/verified-repositories" routerLinkActive="active">
+            <i class="pi pi-box"></i> Verified Publisher
+        </a>
+    </p>
+    <p>
+        <a routerLink="public/sponsored-repositories" routerLinkActive="active">
+            <i class="pi pi-box"></i> Sponsored OSS
+        </a>
+    </p>
 
     <p *ngIf="isLoggedIn()">
         <a routerLink="/repositories" routerLinkActive="active">
