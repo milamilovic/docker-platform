@@ -4,6 +4,7 @@ import com.dockerplatform.backend.dto.CacheablePage;
 import com.dockerplatform.backend.dto.RepositoryDto;
 import com.dockerplatform.backend.dto.RepositorySearchDTO;
 import com.dockerplatform.backend.service.PublicRepositoryService;
+import com.dockerplatform.backend.service.PublicSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,9 @@ public class PublicRepositoryController {
 
     @Autowired
     PublicRepositoryService publicRepositoryService;
+
+    @Autowired
+    PublicSearchService publicSearchService;
 
     @GetMapping("/top-pulled")
     public Page<RepositorySearchDTO> getTopPulledRepositories(
@@ -43,7 +47,7 @@ public class PublicRepositoryController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size
     ) {
-        return publicRepositoryService.search(q, page, size);
+        return publicSearchService.search(q, page, size);
     }
 
     @GetMapping("/official")
