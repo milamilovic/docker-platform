@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService  {
@@ -24,7 +25,9 @@ public class UserService  {
     public User findByUsername(String username){
         return userRepo.findByUsername(username).orElse(null);
     }
-    
+
+    public User findById(String id) { return userRepo.findById(UUID.fromString(id)).orElse(null); }
+
     public Optional<User> register(UserDto dto, UserRole role){
 
         if (userRepo.findByUsername(dto.getUsername()).isPresent()){

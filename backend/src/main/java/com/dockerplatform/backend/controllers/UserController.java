@@ -1,6 +1,9 @@
 package com.dockerplatform.backend.controllers;
 
+import com.dockerplatform.backend.dto.ChangePasswordRequest;
 import com.dockerplatform.backend.dto.UserDto;
+import com.dockerplatform.backend.dto.UserInfoDto;
+import com.dockerplatform.backend.models.User;
 import com.dockerplatform.backend.models.enums.UserRole;
 import com.dockerplatform.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,5 +43,19 @@ public class UserController {
                 .orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserInfo(@PathVariable String id ){
+
+        User user = userService.findById(id);
+        if (user != null){
+            UserInfoDto dto = new UserInfoDto(user.getUsername(),user.getEmail());
+            return ResponseEntity.ok(dto);
+        }
+        return  ResponseEntity.notFound().build();
+    }
+    @PutMapping
+    public ResponseEntity<Boolean> changePassword(@RequestBody ChangePasswordRequest request){
+        return ResponseEntity.ok(userService.changePassword(request));
+    }
 
 }
