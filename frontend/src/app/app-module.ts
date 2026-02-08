@@ -29,6 +29,9 @@ import { Auth } from './features/auth/auth';
 import {Interceptor} from './features/auth/interceptor';
 import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
 import { RepositoriesModule } from './features/repositories/repositories-module';
+import { Admins } from './features/admins/admins';
+import {TableModule} from 'primeng/table';
+import {TagModule} from 'primeng/tag';
 
 @NgModule({
   declarations: [
@@ -39,6 +42,7 @@ import { RepositoriesModule } from './features/repositories/repositories-module'
     Sidebar,
     Register,
     Auth,
+    Admins,
   ],
     imports: [
         BrowserModule,
@@ -55,6 +59,8 @@ import { RepositoriesModule } from './features/repositories/repositories-module'
         FormsModule,
         RepositoriesModule,
         SelectModule,
+        TableModule,
+        TagModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

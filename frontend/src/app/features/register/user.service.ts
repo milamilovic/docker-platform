@@ -15,4 +15,12 @@ export class UserService {
   register(userDto: UserDto): Observable<UserDto> {
     return this.http.post<UserDto>(`${this.API_URL}/register`, userDto);
   }
+
+  getAdmins():Observable<any>{
+    return this.http.get<UserDto[]>(`${this.API_URL}/admins`)
+  }
+
+  registerAdmin(dto: UserDto): Observable<UserDto> {
+    return this.http.post<UserDto>(`${this.API_URL}/admins`, dto);
+  }
 }

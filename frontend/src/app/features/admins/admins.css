@@ -1,0 +1,74 @@
+:host ::ng-deep .centered-dialog .p-dialog-header {
+  justify-content: center;
+}
+
+.setup-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 1rem;
+}
+
+.setup-text {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.input-group {
+  width: 100%;
+  max-width: 320px;
+  margin-bottom: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input-group label {
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.75rem;
+  text-align: center;
+  border-radius: 6px;
+}
+
+.setup-btn {
+  width: 100%;
+  max-width: 320px;
+  padding: 0.75rem !important;
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+.table-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  width: 100%;
+}
+
+.table-container {
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 0 0.5rem;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  text-align: center;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  text-align: center;
+}
