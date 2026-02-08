@@ -1,0 +1,187 @@
+<div class="container analytics">
+  <div class="header">
+    <h2>System Analytics - Log Search</h2>
+    <p-button
+      label="Export Results"
+      icon="pi pi-download"
+      (onClick)="exportLogs()"
+      [disabled]="searchResults.length === 0"
+      styleClass="p-button-outlined">
+    </p-button>
+  </div>
+
+  <div class="search-section container">
+    <h3>Search Logs</h3>
+
+    <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="search-form">
+      <div class="field flex flex-column gap-2">
+        <label for="query" class="font-bold">Search Query</label>
+        <textarea
+          pInputText
+          id="query"
+          formControlName="query"
+          placeholder="Example: (level:ERROR OR level:WARNING) AND message:&quot;database&quot;"
+          rows="3">
+                </textarea>
+        <small>
+          Use operators: <code>AND</code>, <code>OR</code>, <code>NOT</code> and parentheses <code>()</code>
+          <br>
+          Search fields: <code>level:ERROR</code>, <code>message:"text"</code>, <code>logger:ClassName</code>
+        </small>
+      </div>
+
+      <div class="date-range">
+        <div class="field flex flex-column gap-2">
+          <label for="startDate" class="font-bold">Start Date</label>
+          <input
+            type="datetime-local"
+            id="startDate"
+            formControlName="startDate"
+            pInputText>
+        </div>
+        <div class="field flex flex-column gap-2">
+          <label for="endDate" class="font-bold">End Date</label>
+          <input
+            type="datetime-local"
+            id="endDate"
+            formControlName="endDate"
+            pInputText>
+        </div>
+      </div>
+
+      <div class="field flex flex-column gap-2">
+        <label class="font-bold">Log Levels</label>
+        <div class="log-levels">
+          <div *ngFor="let level of logLevels" class="level-checkbox">
+            <p-checkbox
+              [value]="level"
+              [(ngModel)]="selectedLevels"
+              [ngModelOptions]="{standalone: true}"
+              [inputId]="'level-' + level">
+            </p-checkbox>
+            <label [for]="'level-' + level" [class]="'level-badge ' + level.toLowerCase()">
+              {{ level }}
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="quick-filters">
+        <span class="font-bold">Quick Filters:</span>
+        <p-button
+          label="Last Hour"
+          (onClick)="applyQuickFilter('1h')"
+          styleClass="p-button-sm p-button-outlined">
+        </p-button>
+        <p-button
+          label="Last 24 Hours"
+          (onClick)="applyQuickFilter('24h')"
+          styleClass="p-button-sm p-button-outlined">
+        </p-button>
+        <p-button
+          label="Last 7 Days"
+          (onClick)="applyQuickFilter('7d')"
+          styleClass="p-button-sm p-button-outlined">
+        </p-button>
+        <p-button
+          label="Errors Only"
+          (onClick)="applyQuickFilter('errors')"
+          styleClass="p-button-sm p-button-outlined p-button-danger">
+        </p-button>
+      </div>
+
+      <div class="search-actions">
+        <p-button
+          label="Clear"
+          icon="pi pi-times"
+          (onClick)="clearSearch()"
+          styleClass="p-button-text">
+        </p-button>
+        <p-button
+          label="Search Logs"
+          icon="pi pi-search"
+          type="submit"
+          [loading]="loading">
+        </p-button>
+      </div>
+    </form>
+  </div>
+
+  <div class="results-section" *ngIf="searchPerformed">
+    <div class="results-header">
+      <h3>
+        Search Results
+        <span class="results-count">({{ totalResults }} logs found in {{ searchTook }}ms)</span>
+      </h3>
+      <div class="results-per-page">
+        <label>Results per page:</label>
+        <p-select
+          [options]="pageSizeOptions"
+          [(ngModel)]="pageSize"
+          (onChange)="onPageSizeChange()">
+        </p-select>
+      </div>
+    </div>
+
+    <div class="logs-list">
+      <div *ngFor="let log of searchResults" class="container log-entry" [class.expanded]="log === expandedLog">
+        <div class="log-header" (click)="toggleExpand(log)">
+          <div class="log-main">
+            <span class="log-timestamp">{{ formatTimestamp(log.timestamp) }}</span>
+            <span class="level-badge" [class]="log.level.toLowerCase()">
+                            {{ log.level }}
+                        </span>
+            <span class="log-message">{{ log.message }}</span>
+          </div>
+          <i class="pi" [class.pi-chevron-down]="log !== expandedLog" [class.pi-chevron-up]="log === expandedLog"></i>
+        </div>
+
+        <div class="log-details" *ngIf="log === expandedLog">
+          <div class="detail-row" *ngIf="log.logger">
+            <strong>Logger:</strong>
+            <span class="logger-name">{{ log.logger }}</span>
+          </div>
+          <div class="detail-row" *ngIf="log.thread">
+            <strong>Thread:</strong>
+            <span>{{ log.thread }}</span>
+          </div>
+          <div class="detail-row" *ngIf="log.stackTrace">
+            <strong>Stack Trace:</strong>
+            <pre class="stack-trace">{{ log.stackTrace }}</pre>
+          </div>
+          <div class="detail-row" *ngIf="log.additionalData">
+            <strong>Additional Data:</strong>
+            <pre class="additional-data">{{ log.additionalData | json }}</pre>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="searchResults.length === 0" class="no-results">
+        <i class="pi pi-inbox"></i>
+        <p>No logs found matching your search criteria</p>
+        <small>Try adjusting your filters or search query</small>
+      </div>
+    </div>
+
+    <!-- paginacija -->
+    <div class="pagination" *ngIf="totalResults > pageSize">
+      <p-button
+        icon="pi pi-angle-left"
+        (onClick)="previousPage()"
+        [disabled]="currentPage === 0"
+        styleClass="p-button-text">
+      </p-button>
+      <span class="page-info">
+                Page {{ currentPage + 1 }} of {{ totalPages }}
+            </span>
+      <p-button
+        icon="pi pi-angle-right"
+        (onClick)="nextPage()"
+        [disabled]="currentPage >= totalPages - 1"
+        styleClass="p-button-text">
+      </p-button>
+    </div>
+  </div>
+</div>
+
+<p-toast></p-toast>

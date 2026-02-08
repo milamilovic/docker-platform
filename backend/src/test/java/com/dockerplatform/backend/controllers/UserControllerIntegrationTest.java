@@ -2,14 +2,19 @@ package com.dockerplatform.backend.controllers;
 
 import com.dockerplatform.backend.dto.UserDto;
 import com.dockerplatform.backend.models.User;
+import com.dockerplatform.backend.models.enums.UserRole;
 import com.dockerplatform.backend.repositories.UserRepo;
+import com.dockerplatform.backend.service.CacheService;
+import com.dockerplatform.backend.service.RegistryTokenService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,9 +24,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -33,7 +40,10 @@ class UserControllerIntegrationTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
-
+    @MockitoBean
+    private RegistryTokenService tokenService;
+    @MockitoBean
+    private CacheService cacheService;
     private MockMvc mockMvc;
 
     @Autowired
@@ -67,10 +77,9 @@ class UserControllerIntegrationTest {
         mockMvc.perform(post("/user/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userDto)))
-                .andExpect(status().isOk());
-//                .andExpect(jsonPath("$.username", is("novikorisnik")))
-//                .andExpect(jsonPath("$.email", is("novi@example.com")))
-//                .andExpect(jsonPath("$.role", is("REGULAR")));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username", is("novikorisnik")))
+                .andExpect(jsonPath("$.email", is("novi@example.com")));
     }
 
     @Test
@@ -90,4 +99,20 @@ class UserControllerIntegrationTest {
                         .content(objectMapper.writeValueAsString(userDto)))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    @WithMockUser(roles = {"SUPER_ADMIN"})
+    void testRegisterAdmin_Success() throws Exception {
+        UserDto adminDto = new UserDto();
+        adminDto.setUsername("noviAdmin");
+        adminDto.setEmail("admin@test.com");
+
+        mockMvc.perform(post("/user/admins")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(adminDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.username", is("noviAdmin")))
+                .andExpect(jsonPath("$.role", is("ADMIN")));
+    }
+
 }

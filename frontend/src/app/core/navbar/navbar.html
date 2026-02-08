@@ -13,12 +13,13 @@
             [formControl]="searchControl"
             (keyup.enter)="onEnter()" />
     </p-iconField>
+    <app-profile [(visible)] ="showProfile" (visibleChange) = "onVisibleChange($event)"/>
     <div class="unregistered-menu" *ngIf="!isLoggedIn">
         <app-auth/>
         <app-register/>
     </div>
     <div class="admin-menu" *ngIf="isLoggedIn">
-        <p-avatar label="A" size="large" shape="circle" class="mr-4"/>
+        <p-avatar label="A" size="large" shape="circle" class="mr-4" (click)="showProfile = true"/>
         <i class="pi pi-sign-out" (click)="authService.logOut()"></i>
     </div>
     <!-- <div class="regular-menu">
