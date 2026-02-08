@@ -70,7 +70,11 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return request.getServletPath().equals("/auth/token");
+        String path = request.getServletPath();
+
+        return path.equals("/auth/token")
+                || path.equals("/registry/events");
     }
+
 
 }

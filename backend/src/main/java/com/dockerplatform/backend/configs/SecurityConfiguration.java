@@ -30,6 +30,7 @@ public class SecurityConfiguration {
                  .httpBasic(basic -> {})
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/user/register","/auth").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/registry/events").permitAll()
                         .requestMatchers(HttpMethod.GET, "/auth/token").authenticated()
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated())
