@@ -1,6 +1,7 @@
 .results {
     width: 100%;
     overflow-x: hidden;
+    height: 600px;
 }
 
 .items {
@@ -12,3 +13,18 @@
     gap: 10px;
 }
 
+.no-results {
+    text-align: center;
+    padding: 3rem;
+    color: var(--p-zinc-500);
+    height: 526px;
+}
+
+.no-results i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.no-results p {
+    margin: 0;
+}

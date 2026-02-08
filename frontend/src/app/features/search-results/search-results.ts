@@ -12,9 +12,11 @@ import { distinctUntilChanged, filter, map, Observable, switchMap } from 'rxjs';
   styleUrl: './search-results.css',
 })
 export class SearchResults {
-    repos?: Repository[];
+    repos: Repository[] = [];
     pageInfo?: Page<Repository>;
     query: string = '';
+
+    loading: boolean = false;
     
     constructor(
         private searchService: SearchService,
@@ -30,14 +32,17 @@ export class SearchResults {
         )
         .subscribe(q => {
             this.query = q;
-            this.search(q, 0, 16);
+            this.search(q, 0, 8);
         });
     }
 
     search(query: string, page: number, size: number) {
+        this.repos = [];
+        this.loading = true; 
         this.searchService.search(query, page, size).subscribe(page => {
             this.pageInfo = page;
             this.repos = page.content;
+            this.loading = false;
             this.cd.detectChanges();
         });
     }

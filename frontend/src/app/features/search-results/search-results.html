@@ -6,4 +6,14 @@
         [repo]="repo">
         </app-repo-card>
     </div>
+    
+    <div *ngIf="repos.length === 0 && !loading" class="no-results">
+        <i class="pi pi-inbox"></i>
+        <p>No repositories found</p>
+    </div>
+
+    <div *ngIf="loading" class="no-results">
+        <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
+        <p>Loading repositories...</p>
+    </div>
 </div>
