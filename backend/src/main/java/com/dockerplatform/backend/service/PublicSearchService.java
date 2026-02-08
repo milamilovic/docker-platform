@@ -37,7 +37,7 @@ public class PublicSearchService {
         return repoPage.map(RepositorySearchDTO::from);
     }
 
-    private SearchCriteria parse(String query) {
+    SearchCriteria parse(String query) {
         SearchCriteria criteria = new SearchCriteria();
         criteria.setGeneral(new ArrayList<>());
         criteria.setBadges(new HashSet<>());
@@ -82,7 +82,7 @@ public class PublicSearchService {
         return criteria;
     }
 
-    private Specification<Repository> buildSpecification(SearchCriteria criteria) {
+    Specification<Repository> buildSpecification(SearchCriteria criteria) {
         Specification<Repository> spec = isPublic();
 
         if (criteria.getRepo() != null)
