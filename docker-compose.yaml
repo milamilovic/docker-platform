@@ -84,7 +84,11 @@ services:
       - "LOGSTASH_TCP_PORT=${LOGSTASH_TCP_PORT}"
       - "BATCH_SIZE=${BATCH_SIZE}"
       - "BATCH_DELAY=${BATCH_DELAY}"
+      - "REGISTRY_JWT_ISSUER=${REGISTRY_JWT_ISSUER}"
+      - "REGISTRY_JWT_KEY_ID=${REGISTRY_JWT_KEY_ID}"
+      - "REGISTRY_JWT_PRIVATE_KEY_PATH=${REGISTRY_JWT_PRIVATE_KEY_PATH}"
     volumes:
+      - ./registry-auth/registry-private.pem:/app/registry-private.pem:ro
       - ./secrets:/app/secrets
     depends_on:
       - database
@@ -99,8 +103,24 @@ services:
       - "BACKEND_PORT=${BACKEND_PORT}"
     depends_on:
       - backend
+    
+  registry:
+    image: registry:3
+    container_name: registry
+    command: ["registry", "serve", "/etc/docker/registry/config.yml"]
+    ports:
+      - "${REGISTRY_PORT}:5000"
+    volumes:
+      - registry_data:/var/lib/registry
+      - ./registry/config.yml:/etc/docker/registry/config.yml:ro
+      - ./registry-auth/jwks.json:/certs/jwks.json:ro
+    depends_on:
+      - backend
+    restart: unless-stopped
+
 
 volumes: 
   postgres_data: 
-  redis_data:
   elasticsearch_data:
+  registry_data:
+  redis_data:
