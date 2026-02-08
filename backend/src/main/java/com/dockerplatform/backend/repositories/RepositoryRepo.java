@@ -64,4 +64,9 @@ public interface RepositoryRepo extends JpaRepository<Repository, UUID> {
             @Param("ownerId") UUID ownerId,
             @Param("search") String search,
             Pageable pageable);
+
+    @Query("select r from Repository r join r.owner o where o.username = :ownerUsername and r.name = :name")
+    Optional<Repository> findByOwnerUsernameAndName(@Param("ownerUsername") String ownerUsername,
+                                                    @Param("name") String name);
+
 }
