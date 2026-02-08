@@ -1,11 +1,13 @@
 package com.dockerplatform.backend.dto;
 
+import com.dockerplatform.backend.models.enums.BadgeType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -16,7 +18,5 @@ public class SearchCriteria {
     private String owner;
     private String description;
     private List<String> general;
-    private Boolean isOfficial;
-    private Boolean isVerified;
-    private Boolean isSponsored;
+    private Set<BadgeType> badges;
 }

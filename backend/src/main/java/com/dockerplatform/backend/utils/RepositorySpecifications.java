@@ -1,7 +1,10 @@
 package com.dockerplatform.backend.utils;
 
 import com.dockerplatform.backend.models.Repository;
+import com.dockerplatform.backend.models.enums.BadgeType;
 import org.springframework.data.jpa.domain.Specification;
+
+import java.util.Set;
 
 public class RepositorySpecifications {
 
@@ -34,5 +37,10 @@ public class RepositorySpecifications {
 
     public static Specification<Repository> isSponsored() {
         return (root, query, cb) -> cb.isTrue(root.get("isSponsored"));
+    }
+
+    public static Specification<Repository> hasAnyBadge(Set<BadgeType> badges) {
+        return (root, query, cb) ->
+                root.get("badge").in(badges);
     }
 }

@@ -6,6 +6,7 @@ import com.dockerplatform.backend.dto.RepositorySearchDTO;
 import com.dockerplatform.backend.dto.SearchCriteria;
 import com.dockerplatform.backend.models.Repository;
 import com.dockerplatform.backend.models.User;
+import com.dockerplatform.backend.models.enums.BadgeType;
 import com.dockerplatform.backend.repositories.PublicRepositoryRepo;
 import com.dockerplatform.backend.utils.PageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import static com.dockerplatform.backend.utils.RepositorySpecifications.*;
 
@@ -50,6 +52,7 @@ public class PublicRepositoryService {
     private SearchCriteria parse(String query) {
         SearchCriteria criteria = new SearchCriteria();
         criteria.setGeneral(new ArrayList<>());
+        criteria.setBadges(new HashSet<>());
 
         if (query == null || query.isBlank()) return criteria;
 
@@ -73,9 +76,14 @@ public class PublicRepositoryService {
                         criteria.setDescription(value);
                         break;
                     case "is":
-                        if ("official".equalsIgnoreCase(value)) criteria.setIsOfficial(true);
-                        if ("verified".equalsIgnoreCase(value)) criteria.setIsVerified(true);
-                        if ("sponsored".equalsIgnoreCase(value)) criteria.setIsSponsored(true);
+                        switch (value.toLowerCase()) {
+                            case "official" ->
+                                    criteria.getBadges().add(BadgeType.DOCKER_OFFICIAL_IMAGE);
+                            case "verified" ->
+                                    criteria.getBadges().add(BadgeType.VERIFIED_PUBLISHER);
+                            case "sponsored" ->
+                                    criteria.getBadges().add(BadgeType.SPONSORED_OSS);
+                        }
                         break;
                 }
             } else {
@@ -109,9 +117,9 @@ public class PublicRepositoryService {
             spec = spec.and(generalSpec);
         }
 
-//        if (criteria.getOfficial() != null && criteria.getOfficial()) spec = spec.and(isOfficial());
-//        if (criteria.getVerified() != null && criteria.getVerified()) spec = spec.and(isVerified());
-//        if (criteria.getSponsored() != null && criteria.getSponsored()) spec = spec.and(isSponsored());
+        if (!criteria.getBadges().isEmpty()) {
+            spec = spec.and(hasAnyBadge(criteria.getBadges()));
+        }
 
         return spec;
     }
