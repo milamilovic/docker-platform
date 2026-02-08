@@ -2,6 +2,7 @@ package com.dockerplatform.backend.configs;
 
 import com.dockerplatform.backend.security.CustomUserDetailsService;
 import com.dockerplatform.backend.security.JwtFilter;
+import com.dockerplatform.backend.security.SystemLockdownFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,16 +23,21 @@ public class SecurityConfiguration {
     @Autowired
     private JwtFilter jwtFilter;
 
+    @Autowired
+    private SystemLockdownFilter lockdownFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
          return http.csrf(customizer -> customizer.disable())
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/user/register","/auth").permitAll()
+                        .requestMatchers("/user/register","/auth/**").permitAll()
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).build();
+                 .addFilterBefore(lockdownFilter, UsernamePasswordAuthenticationFilter.class)
+                 .addFilterBefore(jwtFilter, SystemLockdownFilter.class)
+                 .build();
 
     }
 

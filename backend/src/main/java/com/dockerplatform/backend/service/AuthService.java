@@ -29,7 +29,6 @@ public class AuthService {
 
     public AuthResponse authenticateUser(AuthRequest dto) throws AuthenticationException {
 
-
         Authentication auth = authManager.authenticate(
                 new UsernamePasswordAuthenticationToken(dto.username(), dto.password()));
 
@@ -42,5 +41,9 @@ public class AuthService {
 
         SecurityContextHolder.getContext().setAuthentication(auth);
         return new AuthResponse(jwtService.generateToken(userService.findByUsername(dto.username())));
+    }
+
+    public boolean isSystemLocked(){
+        return Files.exists(Path.of("secrets","super_admin.txt"));
     }
 }

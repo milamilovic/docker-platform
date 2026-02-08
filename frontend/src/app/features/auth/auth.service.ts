@@ -36,6 +36,9 @@ export class AuthService {
     localStorage.clear();
     this.loggedIn$.next(false);
   }
+  status(): Observable<boolean> {
+    return this.http.get<boolean>(`${ env.apiUrl }/auth/status`)
+  }
 
   isLoggedIn(): boolean {
     this.getUserId();

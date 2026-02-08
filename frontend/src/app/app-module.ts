@@ -16,7 +16,7 @@ import { PasswordModule } from 'primeng/password';
 
 // import { AvatarGroupModule } from 'primeng/avatargroup';
 
-import { ReactiveFormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { Hello } from './features/hello/hello';
@@ -38,20 +38,21 @@ import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@ang
     Register,
     Auth,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    ButtonModule,
-    InputTextModule,
-    IconFieldModule,
-    InputIconModule,
-    AvatarModule,
-    DialogModule,
-    ReactiveFormsModule,
-    ToastModule,
-    PasswordModule
-    // AvatarGroupModule
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        ButtonModule,
+        InputTextModule,
+        IconFieldModule,
+        InputIconModule,
+        AvatarModule,
+        DialogModule,
+        ReactiveFormsModule,
+        ToastModule,
+        PasswordModule,
+        FormsModule,
+        // AvatarGroupModule
+    ],
   providers: [
     provideBrowserGlobalErrorListeners(),
     // provideAnimationsAsync(), // Required for animations
