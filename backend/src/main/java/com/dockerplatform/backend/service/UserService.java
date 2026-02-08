@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -42,19 +43,19 @@ public class UserService  {
 
     public boolean changePassword(ChangePasswordRequest request) {
         Optional<User> userOptional = userRepo.findByUsername(request.username());
-
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-
             if (bCryptPasswordEncoder.matches(request.password(), user.getPassword())) {
-
                 user.setPassword(bCryptPasswordEncoder.encode(request.newPassword()));
                 userRepo.save(user);
-
                 return true;
             }
         }
-
         return false;
     }
+
+    public List<User> getAdmins(){
+        return userRepo.findByRole(UserRole.ADMIN);
+    }
+
 }
