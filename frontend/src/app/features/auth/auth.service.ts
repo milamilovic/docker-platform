@@ -4,7 +4,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {BehaviorSubject, Observable} from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import {isPlatformBrowser} from '@angular/common';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 export interface ChPassword {
   username: string;
@@ -25,7 +25,8 @@ export class AuthService {
   userRoleState = this.userRole$.asObservable();
 
   constructor(@Inject(PLATFORM_ID) private platformId: Object,
-              private http: HttpClient, private router: Router) {
+              private http: HttpClient,
+              private router: Router) {
     this.loggedIn$.next(this.isLoggedIn());
     this.userRole$.next(this.getRole());
   }
@@ -41,7 +42,7 @@ export class AuthService {
   logOut(): void {
     localStorage.clear();
     this.loggedIn$.next(false);
-    this.router.navigate(['/home']);
+    this.router.navigate(['']);
   }
   status(): Observable<boolean> {
     return this.http.get<boolean>(`${ this.API_URL }/status`)
