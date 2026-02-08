@@ -9,4 +9,9 @@
             <i class="pi pi-shield"></i> Official Images
         </a>
     </p>
+    <p *ngIf="isSuperAdmin()">
+      <a routerLink="/admins" routerLinkActive="active">
+        <i class="pi pi-users"></i> Admins
+      </a>
+    </p>
 </div>

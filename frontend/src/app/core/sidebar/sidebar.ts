@@ -15,6 +15,10 @@ export class Sidebar {
     return this.authService.getRole() === 'ADMIN';
   }
 
+  isSuperAdmin(): boolean {
+    return this.authService.getRole() === 'SUPER_ADMIN';
+  }
+
   isLoggedIn(): boolean {
     return this.authService.isLoggedIn();
   }
