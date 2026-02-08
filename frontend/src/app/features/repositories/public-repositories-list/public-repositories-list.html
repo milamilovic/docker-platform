@@ -1,0 +1,80 @@
+<div class="container official-repositories">
+    <div class="header">
+        <h2 *ngIf="badge=='DOCKER_OFFICIAL_IMAGE'">Docker Official Repositories</h2>
+        <h2 *ngIf="badge=='VERIFIED_PUBLISHER'">Verified Publisher Repositories</h2>
+        <h2 *ngIf="badge=='SPONSORED_OSS'">Sponsored OSS Rrepositories</h2>
+    </div>
+
+    <div class="search-filter">
+        <p-iconfield iconPosition="left">
+            <p-inputicon styleClass="pi pi-search" />
+            <input pInputText placeholder="Search official repositories..." [(ngModel)]="searchTerm" (input)="onSearch()" />
+        </p-iconfield>
+        <div class="results-per-page">
+            <label>Results per page:  </label>
+            <p-select
+                [options]="pageSizeOptions"
+                [(ngModel)]="pageSize"
+                (onChange)="onPageSizeChange()">
+            </p-select>
+        </div>
+        <p-select 
+            [options]="sortOptions" 
+            [(ngModel)]="selectedSort" 
+            placeholder="Sort by"
+            (onChange)="onSortChange($event)">
+        </p-select>
+    </div>
+
+    <div class="repositories-list">
+        <div *ngFor="let repo of repositories" class="container repository-item" (click)="viewDetails(repo.id)">
+            <div class="repo-header">
+                <div class="repo-name">
+                    <h3>{{ repo.name }}</h3>
+                    <!-- TODO: 3 different based on the badge -->
+                    <span *ngIf="repo.badge=='DOCKER_OFFICIAL_IMAGE'" class="official-badge">Docker Official Image</span>
+                    <span *ngIf="repo.badge=='VERIFIED_PUBLISHER'" class="verified-badge">Verified Publisher</span>
+                    <span *ngIf="repo.badge=='SPONSORED_OSS'" class="sponsored-badge">Sponsored OSS</span>
+                </div>
+            </div>
+            <p class="description">{{ repo.description }}</p>
+            <div class="repo-stats">
+                <span><i class="pi pi-download"></i> {{ formatNumber(repo.numberOfPulls) }} pulls</span>
+                <span><i class="pi pi-star"></i> {{ formatNumber(repo.numberOfStars) }} stars</span>
+                <span><i class="pi pi-user"></i> Maintained by {{ repo.ownerUsername }}</span>
+                <span><i class="pi pi-calendar"></i> Updated {{ getRelativeTime(repo.modifiedAt || repo.createdAt) }}</span>
+            </div>
+        </div>
+
+        <div *ngIf="repositories.length === 0 && !loading" class="no-results">
+            <i class="pi pi-inbox"></i>
+            <p>No repositories found</p>
+        </div>
+
+        <div *ngIf="loading" class="no-results">
+            <i class="pi pi-spin pi-spinner" style="font-size: 2rem;"></i>
+            <p>Loading repositories...</p>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="totalResults > pageSize">
+      <p-button
+        icon="pi pi-angle-left"
+        (onClick)="previousPage()"
+        [disabled]="currentPage === 0"
+        styleClass="p-button-text">
+      </p-button>
+      <span class="page-info">
+                Page {{ currentPage + 1 }} of {{ totalPages }}
+            </span>
+      <p-button
+        icon="pi pi-angle-right"
+        (onClick)="nextPage()"
+        [disabled]="currentPage >= totalPages - 1"
+        styleClass="p-button-text">
+      </p-button>
+    </div>
+</div>
+
+<p-toast></p-toast>

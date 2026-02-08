@@ -74,6 +74,7 @@ class TagControllerIntegrationTest {
         testRepository.setName("test-repo");
         testRepository.setDescription("Test repository");
         testRepository.setOwner(testUser);
+        testRepository.setOwnerUsername(testUser.getUsername());
         testRepository.setPublic(true);
         testRepository.setOfficial(false);
         testRepository.setCreatedAt(System.currentTimeMillis());
@@ -226,6 +227,7 @@ class TagControllerIntegrationTest {
         otherRepo.setName("other-repo");
         otherRepo.setDescription("Other repository");
         otherRepo.setOwner(otherUser);
+        otherRepo.setOwnerUsername(otherUser.getUsername());
         otherRepo.setPublic(true);
         otherRepo.setOfficial(false);
         otherRepo.setCreatedAt(System.currentTimeMillis());

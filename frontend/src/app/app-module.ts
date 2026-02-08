@@ -14,6 +14,8 @@ import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { PasswordModule } from 'primeng/password';
 import { SelectModule } from 'primeng/select';
+import { FormsModule } from '@angular/forms';
+import { CheckboxModule } from 'primeng/checkbox';
 
 // import { AvatarGroupModule } from 'primeng/avatargroup';
 
@@ -26,8 +28,10 @@ import { Home } from './features/home/home';
 import { Sidebar } from './core/sidebar/sidebar';
 import { Register } from './features/register/register';
 import { Auth } from './features/auth/auth';
-import {Interceptor} from './features/auth/interceptor';
-import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
+import { Interceptor } from './features/auth/interceptor';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { RepoCard } from './shared/components/repo-card/repo-card';
+import { SearchResults } from './features/search-results/search-results';
 import { RepositoriesModule } from './features/repositories/repositories-module';
 
 @NgModule({
@@ -39,22 +43,25 @@ import { RepositoriesModule } from './features/repositories/repositories-module'
     Sidebar,
     Register,
     Auth,
+    RepoCard,
+    SearchResults,
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        ButtonModule,
-        InputTextModule,
-        IconFieldModule,
-        InputIconModule,
-        AvatarModule,
-        DialogModule,
-        ReactiveFormsModule,
-        ToastModule,
-        PasswordModule,
-        FormsModule,
-        RepositoriesModule,
-        SelectModule,
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    ButtonModule,
+    InputTextModule,
+    IconFieldModule,
+    InputIconModule,
+    AvatarModule,
+    DialogModule,
+    ReactiveFormsModule,
+    ToastModule,
+    PasswordModule,
+    CheckboxModule,
+    RepositoriesModule,
+    SelectModule,
+    FormsModule,
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

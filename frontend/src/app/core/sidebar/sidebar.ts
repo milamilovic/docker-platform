@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { AuthService } from '../../features/auth/auth.service';
 
 @Component({
@@ -8,6 +9,13 @@ import { AuthService } from '../../features/auth/auth.service';
   styleUrl: './sidebar.css',
 })
 export class Sidebar {
+    checked: any = null;
+
+    filtersForm = new FormGroup({
+        isOfficial: new FormControl(false),
+        isVerified: new FormControl(false),
+        isSponsored: new FormControl(false),
+    })
 
   constructor(private authService: AuthService) {}
 
