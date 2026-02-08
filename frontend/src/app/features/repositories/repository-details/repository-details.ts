@@ -8,6 +8,7 @@ import { SpringPage } from '../models/spring-page.model';
 import { RepositoryService } from '../services/repository.service';
 import { TagService } from '../services/tag.service';
 import { debounceTime, Subject } from 'rxjs';
+import { StarService } from '../services/star.service';
 
 @Component({
   selector: 'app-repository-details',
@@ -27,6 +28,8 @@ export class RepositoryDetails implements OnInit {
   displayDeleteRepoDialog: boolean = false;
   tagToDelete?: Tag;
   confirmDeleteName: string = '';
+
+  isStarred: boolean = false; 
   
   // Tags pagination
   currentPage: number = 0;
@@ -63,7 +66,8 @@ export class RepositoryDetails implements OnInit {
     private messageService: MessageService,
     private repositoryService: RepositoryService,
     private tagService: TagService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private starService: StarService
   ) {
     this.settingsForm = this.fb.group({
       description: ['', Validators.required],
@@ -85,6 +89,15 @@ export class RepositoryDetails implements OnInit {
         this.loadTags(this.repository.id);
       }
     });
+  }
+
+  // TODO: 
+  loadStar() {
+
+  }
+
+  toggleStar() {
+    this.isStarred = !this.isStarred;
   }
 
   loadRepository(id: string): void {
@@ -331,4 +344,6 @@ export class RepositoryDetails implements OnInit {
     if (days < 30) return `${Math.floor(days / 7)} weeks ago`;
     return `${Math.floor(days / 30)} months ago`;
   }
+
+
 }
