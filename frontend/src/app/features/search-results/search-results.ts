@@ -17,6 +17,10 @@ export class SearchResults {
     query: string = '';
 
     loading: boolean = false;
+
+    currentPage: number = 0; 
+    pageSize: number = 8; 
+
     
     constructor(
         private searchService: SearchService,
@@ -45,5 +49,32 @@ export class SearchResults {
             this.loading = false;
             this.cd.detectChanges();
         });
+    }
+
+    previousPage(): void {
+        if (this.currentPage > 0) {
+            this.currentPage--;
+            this.search(this.query, this.currentPage, this.pageSize);
+        }
+    }
+
+    nextPage(): void {
+        if (!this.pageInfo) return; 
+
+        if (this.currentPage < this.pageInfo.totalPages - 1) {
+            this.currentPage++;
+            this.search(this.query, this.currentPage, this.pageSize);
+        }
+    }
+
+    onPageSizeChange(): void {
+        this.currentPage = 0;
+        // this.search(this.query, this.currentPage, this.pageSize);
+    }
+
+    onPageChange(event: any): void {
+        this.currentPage = event.page;
+        this.pageSize = event.rows;
+        // this.search(this.query, this.currentPage, this.pageSize);
     }
 }

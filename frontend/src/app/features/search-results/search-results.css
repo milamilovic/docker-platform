@@ -7,10 +7,12 @@
 .items {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: baseline;
     flex-wrap: wrap;
-    justify-content: space-between;
+    /* justify-content: space-evenly; */
     gap: 10px;
+    width: 100%;
+    height: 370px;
 }
 
 .no-results {
@@ -27,4 +29,11 @@
 
 .no-results p {
     margin: 0;
+}
+
+.pagination-container, .pagination {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
