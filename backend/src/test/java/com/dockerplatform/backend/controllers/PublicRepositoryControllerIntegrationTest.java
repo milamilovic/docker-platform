@@ -7,6 +7,8 @@ import com.dockerplatform.backend.models.enums.UserRole;
 import com.dockerplatform.backend.repositories.RepositoryRepo;
 import com.dockerplatform.backend.repositories.UserRepo;
 import com.dockerplatform.backend.service.PublicRepositoryService;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import org.springframework.http.MediaType;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.everyItem;
@@ -55,7 +63,7 @@ class PublicRepositoryControllerIntegrationTest {
     private Repository repo3;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         this.mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
                 .apply(springSecurity())
@@ -112,6 +120,12 @@ class PublicRepositoryControllerIntegrationTest {
         repo3.setModifiedAt(System.currentTimeMillis());
         repo3.setBadge(BadgeType.VERIFIED_PUBLISHER);
         repositoryRepo.save(repo3);
+        Path adminSecret = Paths.get("secrets", "super_admin.txt");
+
+        if (Files.exists(adminSecret)) {
+            Files.delete(adminSecret);
+            System.out.println("Obrisan super_admin.txt - sustav otključan za testove.");
+        }
     }
 
     @Test

@@ -5,6 +5,11 @@ import {BehaviorSubject, Observable} from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import {isPlatformBrowser} from '@angular/common';
 
+export interface ChPassword {
+  username: string;
+  password: string;
+  newPassword: string;
+}
 @Injectable({
   providedIn: 'root',
 })
@@ -35,6 +40,12 @@ export class AuthService {
   logOut(): void {
     localStorage.clear();
     this.loggedIn$.next(false);
+  }
+  status(): Observable<boolean> {
+    return this.http.get<boolean>(`${ this.API_URL }/status`)
+  }
+  initSystem(chPassword: ChPassword): Observable<boolean> {
+    return this.http.post<boolean>(`${ this.API_URL }/initialize`, chPassword);
   }
 
   isLoggedIn(): boolean {
