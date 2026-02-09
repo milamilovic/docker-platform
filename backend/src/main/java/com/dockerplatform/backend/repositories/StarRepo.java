@@ -26,4 +26,5 @@ public interface StarRepo extends JpaRepository<Star, UUID> {
     Page<Repository> findStarredRepositoriesByUser(UUID userId, String search, Pageable pageable);
 
     boolean existsByUserAndRepository(User currentUser, Repository repository);
+
 }

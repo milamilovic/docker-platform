@@ -269,14 +269,20 @@ public class RepositoryService {
         repositoryRepo.delete(repository);
     }
 
-    @Cacheable(value = "userStarredRepo",
-            key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName() + '_' + #repositoryId",
-            unless = "#result == null")
+//    @Caching(evict = {
+//            @CacheEvict(value = "repository", key = "#id"),
+//            @CacheEvict(value = "myRepositories", allEntries = true),
+//            @CacheEvict(value = "officialRepositories", allEntries = true),
+//            @CacheEvict(value = "myOfficialRepositories", allEntries = true)
+//    })
+////    @Cacheable(value = "userStarredRepo",
+////            key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName() + '_' + #repositoryId",
+////            unless = "#result == null")
     public boolean hasUserStarredRepository(UUID repositoryId) {
         User currentUser = getCurrentUser();
         Repository repository = repositoryRepo.findById(repositoryId)
                 .orElseThrow(() -> new RuntimeException("Repository not found"));
 
-        return starRepo.existsByUserAndRepository(currentUser, repository);
+        return starRepo.findByUserIdAndRepositoryId(currentUser.getId(), repository.getId()).isPresent();
     }
 }

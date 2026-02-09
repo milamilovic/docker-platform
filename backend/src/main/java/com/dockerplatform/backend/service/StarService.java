@@ -10,6 +10,8 @@ import com.dockerplatform.backend.repositories.StarRepo;
 import com.dockerplatform.backend.dto.CacheablePage;
 import com.dockerplatform.backend.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -35,6 +37,12 @@ public class StarService {
     @Autowired
     private RepositoryRepo repositoryRepo;
 
+    @Caching(evict = {
+            @CacheEvict(value = "officialRepositories", allEntries = true),
+            @CacheEvict(value = "myRepositories", allEntries = true),
+            @CacheEvict(value = "myOfficialRepositories", allEntries = true),
+            @CacheEvict(value = "userStarredRepo", allEntries = true)
+    })
     @Transactional
     public void setStar(StarRequestDto req) {
         UUID userId = req.getUserId();
@@ -55,16 +63,21 @@ public class StarService {
             Star star = new Star();
             star.setUser(user);
             star.setRepository(repo);
-
+            repo.setNumberOfStars(repo.getNumberOfStars() + 1);
             try {
                 starRepository.save(star);
+                repositoryRepo.save(repo);
             } catch (DataIntegrityViolationException ignored) {
                 // race condition (ako postoji unique constraint user_id+repository_id)
             }
 
         } else {
             // UNSTAR (idempotentno)
+            Repository repo = repositoryRepo.findById(repoId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Repository not found"));
             starRepository.deleteByUserIdAndRepositoryId(userId, repoId);
+            repo.setNumberOfStars(repo.getNumberOfStars() - 1);
+            repositoryRepo.save(repo);
         }
     }
 
