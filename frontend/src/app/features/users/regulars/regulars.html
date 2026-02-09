@@ -14,14 +14,15 @@
         <p-select
           [options]="badgeOptions"
           [(ngModel)]="admin.badge"
-          placeholder="Select a Badge"
+          optionLabel="label"  optionValue="value"  placeholder="Select a Badge"
           (onChange)="onBadgeChange(admin)"
           appendTo="body">
 
-          <ng-template pTemplate="selectedItem">
-            <span [class]="getBadgeClass(admin.badge)">{{ admin.badge }}</span>
+          <ng-template pTemplate="selectedItem" let-selectedOption>
+            <span [class]="getBadgeClass(selectedOption.value)">
+                {{ selectedOption.label }}
+            </span>
           </ng-template>
-
           <ng-template let-option pTemplate="item">
             <span [class]="getBadgeClass(option.value)">{{ option.label }}</span>
           </ng-template>

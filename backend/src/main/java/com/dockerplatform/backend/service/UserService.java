@@ -68,7 +68,9 @@ public class UserService  {
         if (opUser != null){
             User user = opUser.get();
             user.setBadge(badge);
+            user.getRepositories().forEach(repo-> repo.setBadge(badge));
             userRepo.save(user);
+            return true;
         }
         return false;
     }

@@ -54,7 +54,18 @@ public class UserController {
 
     @GetMapping("/regulars")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<?>> getRegulars(){return ResponseEntity.ok(userService.getRegulars());}
+    public ResponseEntity<List<?>> getRegulars(){
+        List<UserDto> userDtos = userService.getRegulars().stream()
+                .map(user -> {
+                    UserDto dto = new UserDto();
+                    dto.setEmail(user.getEmail());
+                    dto.setUsername(user.getUsername());
+                    dto.setBadge(user.getBadge());
+                    return dto;
+                })
+                .toList();
+        return ResponseEntity.ok(userDtos);
+    }
 
     @PutMapping("/regulars/badge/{username}/{badge}")
     @PreAuthorize("hasRole('ADMIN')")
