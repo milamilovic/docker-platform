@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { Repository, RepositoryDto, RepositoryUpdateDto } from '../models/repository.model';
 import { SpringPage } from '../models/spring-page.model';
 import { env } from '../../../shared/env';
+import { StarRequestDto } from '../models/star.model';
+
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +13,13 @@ import { env } from '../../../shared/env';
 export class RepositoryService {
   
   private readonly API_URL = `${env.apiUrl}/repositories`;
+  private readonly STAR_URL = `${env.apiUrl}/stars`;
 
   constructor(private http: HttpClient) { }
 
+  setStar(dto: StarRequestDto): Observable<void> {
+    return this.http.post<void>(`${this.STAR_URL}`, dto);
+  }
   getMyRepositories(
     page: number = 0,
     size: number = 10,
@@ -93,5 +99,9 @@ export class RepositoryService {
 
   deleteRepository(id: string): Observable<void> {
     return this.http.delete<void>(`${this.API_URL}/${id}`);
+  }
+
+  checkIfStarred(repositoryId: string): Observable<boolean> {
+    return this.http.get<boolean>(`${this.API_URL}/check/${repositoryId}`);
   }
 }
