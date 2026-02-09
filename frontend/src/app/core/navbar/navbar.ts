@@ -17,6 +17,7 @@ export class Navbar implements OnInit {
 
     constructor(protected authService: AuthService, private router: Router) {}
     
+    showProfile: boolean = false;
     ngOnInit(): void {
         this.authService.loggedIn$.subscribe(loggedIn => {
         this.isLoggedIn = loggedIn;
@@ -49,4 +50,6 @@ export class Navbar implements OnInit {
     onLogoClick() {
         this.router.navigate(['/']);
     }
+  onVisibleChange(event: boolean) {this.showProfile = event;}
+
 }

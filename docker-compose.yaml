@@ -89,6 +89,7 @@ services:
       - "REGISTRY_JWT_PRIVATE_KEY_PATH=${REGISTRY_JWT_PRIVATE_KEY_PATH}"
     volumes:
       - ./registry-auth/registry-private.pem:/app/registry-private.pem:ro
+      - ./secrets:/app/secrets
     depends_on:
       - database
       - redis

@@ -54,7 +54,7 @@ export class RepoCard {
         }
     }
 
-    // viewDetails(): void {
-    //  this.router.navigate(['/repositories', this.repo.id]);
-    // }
+    viewDetails(): void {
+     this.router.navigate(['/repositories', this.repo.id]);
+    }
 }
