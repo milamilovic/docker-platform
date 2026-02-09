@@ -3,6 +3,7 @@ package com.dockerplatform.backend.service;
 import com.dockerplatform.backend.dto.ChangePasswordRequest;
 import com.dockerplatform.backend.dto.UserDto;
 import com.dockerplatform.backend.models.User;
+import com.dockerplatform.backend.models.enums.BadgeType;
 import com.dockerplatform.backend.models.enums.UserRole;
 import com.dockerplatform.backend.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,5 +61,17 @@ public class UserService  {
     public List<User> getAdmins(){
         return userRepo.findByRole(UserRole.ADMIN);
     }
+    public List<User> getRegulars(){return userRepo.findByRole(UserRole.REGULAR);}
 
+    public boolean addBadge(String username, BadgeType badge){
+        Optional<User> opUser = userRepo.findByUsername(username);
+        if (opUser != null){
+            User user = opUser.get();
+            user.setBadge(badge);
+            user.getRepositories().forEach(repo-> repo.setBadge(badge));
+            userRepo.save(user);
+            return true;
+        }
+        return false;
+    }
 }

@@ -37,6 +37,7 @@ import { Admins } from './features/users/admins/admins';
 import {TableModule} from 'primeng/table';
 import {TagModule} from 'primeng/tag';
 import { Profile } from './features/users/profile/profile';
+import { Regulars } from './features/users/regulars/regulars';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { Profile } from './features/users/profile/profile';
     SearchResults,
     Admins,
     Profile,
+    Regulars,
   ],
   imports: [
     BrowserModule,

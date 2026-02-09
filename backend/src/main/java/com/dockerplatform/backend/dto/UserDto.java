@@ -1,5 +1,6 @@
 package com.dockerplatform.backend.dto;
 
+import com.dockerplatform.backend.models.enums.BadgeType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,5 +11,5 @@ public class UserDto {
     private String email;
     private String username;
     private String password;
-
+    private BadgeType badge;
 }

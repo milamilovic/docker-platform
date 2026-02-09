@@ -10,6 +10,7 @@ import { OfficialRepositories } from './features/repositories/official-repositor
 import { Home } from './features/home/home';
 import { PublicRepositoriesList } from './features/repositories/public-repositories-list/public-repositories-list';
 import {Admins} from './features/users/admins/admins';
+import {Regulars} from './features/users/regulars/regulars';
 
 
 const routes: Routes = [
@@ -24,6 +25,7 @@ const routes: Routes = [
   { path: 'repositories/:id', component: RepositoryDetails, canActivate: [AuthGuard], data: { role: ['REGULAR', 'ADMIN'] } },
   { path: 'admin/official-repositories', component: OfficialRepositories, canActivate: [AuthGuard], data: { role: ['ADMIN'] } },
   { path: 'admins', component: Admins, canActivate: [AuthGuard], data: { role: ['SUPER_ADMIN'] } },
+  { path: 'regulars', component: Regulars, canActivate: [AuthGuard], data: { role: ['ADMIN'] } },
   { path: '', redirectTo: '', pathMatch: 'full' },
   { path: '**', redirectTo: '', pathMatch: 'full' },
 ];
