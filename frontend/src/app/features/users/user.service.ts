@@ -25,6 +25,10 @@ export class UserService {
     return this.http.post<UserDto>(`${this.API_URL}/admins`, dto);
   }
 
+  getRegulars():Observable<any>{
+    return this.http.get<UserDto[]>(`${this.API_URL}/regulars`)
+  }
+
   changePassword(dto: ChPassword): Observable<boolean>{
     return this.http.put<boolean>(`${this.API_URL}`, dto);
   }
@@ -32,4 +36,9 @@ export class UserService {
   getUserInfo(id:string): Observable<UserInfo> {
     return this.http.get<UserInfo>(`${this.API_URL}/${id}`);
   }
+
+  addBadge(username: string, badge: string): Observable<any> {
+    return this.http.put(`${this.API_URL}/regulars/badge/${username}/${badge}`, {});
+  }
+
 }

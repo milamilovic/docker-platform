@@ -1,0 +1,29 @@
+.table-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  width: 100%;
+}
+
+.table-container {
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 0 0.5rem;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-thead > tr > th {
+  text-align: center;
+}
+
+:host ::ng-deep .p-datatable .p-datatable-tbody > tr > td {
+  text-align: center;
+}

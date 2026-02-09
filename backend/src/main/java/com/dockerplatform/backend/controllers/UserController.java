@@ -4,6 +4,7 @@ import com.dockerplatform.backend.dto.ChangePasswordRequest;
 import com.dockerplatform.backend.dto.UserDto;
 import com.dockerplatform.backend.dto.UserInfoDto;
 import com.dockerplatform.backend.models.User;
+import com.dockerplatform.backend.models.enums.BadgeType;
 import com.dockerplatform.backend.models.enums.UserRole;
 import com.dockerplatform.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,27 @@ public class UserController {
         return userService.register(userDto, UserRole.ADMIN)
                 .map(user -> ResponseEntity.ok(user))
                 .orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @GetMapping("/regulars")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<?>> getRegulars(){
+        List<UserDto> userDtos = userService.getRegulars().stream()
+                .map(user -> {
+                    UserDto dto = new UserDto();
+                    dto.setEmail(user.getEmail());
+                    dto.setUsername(user.getUsername());
+                    dto.setBadge(user.getBadge());
+                    return dto;
+                })
+                .toList();
+        return ResponseEntity.ok(userDtos);
+    }
+
+    @PutMapping("/regulars/badge/{username}/{badge}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> addBadge(@PathVariable String username, @PathVariable BadgeType badge){
+        return  ResponseEntity.ok( userService.addBadge(username,badge) );
     }
 
     @GetMapping("/{id}")
