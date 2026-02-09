@@ -7,6 +7,7 @@ import com.dockerplatform.backend.dto.RepositoryUpdateDto;
 import com.dockerplatform.backend.models.Repository;
 import com.dockerplatform.backend.models.User;
 import com.dockerplatform.backend.repositories.RepositoryRepo;
+import com.dockerplatform.backend.repositories.StarRepo;
 import com.dockerplatform.backend.repositories.TagRepo;
 import com.dockerplatform.backend.repositories.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,9 @@ public class RepositoryService {
 
     @Autowired
     UserRepo userRepo;
+
+    @Autowired
+    StarRepo starRepo;
 
     private User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -263,5 +267,22 @@ public class RepositoryService {
 
         // Delete repository
         repositoryRepo.delete(repository);
+    }
+
+//    @Caching(evict = {
+//            @CacheEvict(value = "repository", key = "#id"),
+//            @CacheEvict(value = "myRepositories", allEntries = true),
+//            @CacheEvict(value = "officialRepositories", allEntries = true),
+//            @CacheEvict(value = "myOfficialRepositories", allEntries = true)
+//    })
+////    @Cacheable(value = "userStarredRepo",
+////            key = "T(org.springframework.security.core.context.SecurityContextHolder).getContext().getAuthentication().getName() + '_' + #repositoryId",
+////            unless = "#result == null")
+    public boolean hasUserStarredRepository(UUID repositoryId) {
+        User currentUser = getCurrentUser();
+        Repository repository = repositoryRepo.findById(repositoryId)
+                .orElseThrow(() -> new RuntimeException("Repository not found"));
+
+        return starRepo.findByUserIdAndRepositoryId(currentUser.getId(), repository.getId()).isPresent();
     }
 }

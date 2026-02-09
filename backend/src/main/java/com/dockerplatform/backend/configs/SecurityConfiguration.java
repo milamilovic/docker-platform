@@ -37,6 +37,7 @@ public class SecurityConfiguration {
                  .httpBasic(basic -> {})
                 .authorizeHttpRequests(request -> request
                         .requestMatchers("/user/register","/auth/**", "/public/**").permitAll()
+                        .requestMatchers("/stars/**", "/repositories/check/*").permitAll()
                         .requestMatchers(HttpMethod.POST, "/registry/events").permitAll()
                         .requestMatchers(HttpMethod.GET, "/auth/token").authenticated()
                         .requestMatchers("/analytics/**").hasAuthority("ADMIN")

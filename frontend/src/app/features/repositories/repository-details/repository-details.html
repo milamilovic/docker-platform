@@ -6,6 +6,15 @@
                 <h2>{{ getRepositoryDisplayName() }}</h2>
                 <p class="description">{{ repository.description }}</p>
             </div>
+            <!-- <p-button *ngIf="!isStarred" icon="pi pi-star" (onClick)="toggleStar()" styleClass="p-button-text"></p-button>
+            <p-button *ngIf="isStarred" icon="pi pi-star-fill" (onClick)="toggleStar()" styleClass="p-button-text"></p-button> -->
+
+            <p-button 
+                [icon]="isStarred ? 'pi pi-star-fill' : 'pi pi-star'" 
+                [label]="isStarred ? 'Starred' : 'Star'"
+                [styleClass]="isStarred ? 'p-button-warning' : 'p-button-outlined'"
+                (onClick)="toggleStar()">
+            </p-button>
         </div>
         <div class="badges">
             <span *ngIf="repository.isOfficial" class="official-badge">Docker Official Image</span>

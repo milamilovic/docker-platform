@@ -8,6 +8,8 @@ import { SpringPage } from '../models/spring-page.model';
 import { RepositoryService } from '../services/repository.service';
 import { TagService } from '../services/tag.service';
 import { debounceTime, Subject } from 'rxjs';
+import { StarService } from '../services/star.service';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
   selector: 'app-repository-details',
@@ -27,6 +29,8 @@ export class RepositoryDetails implements OnInit {
   displayDeleteRepoDialog: boolean = false;
   tagToDelete?: Tag;
   confirmDeleteName: string = '';
+
+  isStarred: boolean = false; 
   
   // Tags pagination
   currentPage: number = 0;
@@ -63,7 +67,8 @@ export class RepositoryDetails implements OnInit {
     private messageService: MessageService,
     private repositoryService: RepositoryService,
     private tagService: TagService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private authService: AuthService
   ) {
     this.settingsForm = this.fb.group({
       description: ['', Validators.required],
@@ -76,6 +81,7 @@ export class RepositoryDetails implements OnInit {
     if (id) {
       this.loadRepository(id);
       this.loadTags(id);
+      this.checkIfStarred(id);
     }
     
     // debounced search
@@ -83,6 +89,45 @@ export class RepositoryDetails implements OnInit {
       this.currentPage = 0;
       if (this.repository) {
         this.loadTags(this.repository.id);
+      }
+    });
+  }
+
+  checkIfStarred(repositoryId: string): void {
+    this.repositoryService.checkIfStarred(repositoryId).subscribe({
+      next: (isStarred) => {
+        this.isStarred = isStarred;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Failed to check star status', err);
+      }
+    });
+  }
+
+  // TODO: 
+  loadStar() {
+
+  }
+
+  // toggleStar() {
+  //   this.isStarred = !this.isStarred;
+  // }
+  toggleStar() {
+    const newValue = !this.isStarred;
+
+    // optimistički UI (odmah promeni dugme)
+    this.isStarred = newValue;
+    const id = this.route.snapshot.paramMap.get('id');
+    const userId = this.authService.getUserId();
+    this.repositoryService.setStar({userId, repositoryId:id!, starred:newValue}).subscribe({
+      next: () => {
+        // OK - ništa
+      },
+      error: (err) => {
+        // rollback ako pukne
+        this.isStarred = !newValue;
+        console.error(err);
       }
     });
   }
@@ -331,4 +376,6 @@ export class RepositoryDetails implements OnInit {
     if (days < 30) return `${Math.floor(days / 7)} weeks ago`;
     return `${Math.floor(days / 30)} months ago`;
   }
+
+
 }

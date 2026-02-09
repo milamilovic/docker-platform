@@ -114,4 +114,11 @@ public class RepositoryController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
+    @GetMapping("/check/{repositoryId}")
+    @PreAuthorize("hasAnyRole('REGULAR', 'ADMIN')")
+    public ResponseEntity<Boolean> checkIfStarred(@PathVariable UUID repositoryId) {
+        boolean isStarred = repositoryService.hasUserStarredRepository(repositoryId);
+        return ResponseEntity.ok(isStarred);
+    }
 }
