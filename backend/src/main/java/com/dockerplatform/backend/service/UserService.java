@@ -1,21 +1,18 @@
 package com.dockerplatform.backend.service;
 
-import com.dockerplatform.backend.dto.AuthRequest;
+import com.dockerplatform.backend.dto.ChangePasswordRequest;
 import com.dockerplatform.backend.dto.UserDto;
 import com.dockerplatform.backend.models.User;
+import com.dockerplatform.backend.models.enums.BadgeType;
 import com.dockerplatform.backend.models.enums.UserRole;
 import com.dockerplatform.backend.repositories.UserRepo;
-import com.dockerplatform.backend.security.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserService  {
@@ -29,7 +26,9 @@ public class UserService  {
     public User findByUsername(String username){
         return userRepo.findByUsername(username).orElse(null);
     }
-    
+
+    public User findById(String id) { return userRepo.findById(UUID.fromString(id)).orElse(null); }
+
     public Optional<User> register(UserDto dto, UserRole role){
 
         if (userRepo.findByUsername(dto.getUsername()).isPresent()){
@@ -45,5 +44,34 @@ public class UserService  {
 
         return  Optional.of(save);
     }
-    
+
+    public boolean changePassword(ChangePasswordRequest request) {
+        Optional<User> userOptional = userRepo.findByUsername(request.username());
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            if (bCryptPasswordEncoder.matches(request.password(), user.getPassword())) {
+                user.setPassword(bCryptPasswordEncoder.encode(request.newPassword()));
+                userRepo.save(user);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public List<User> getAdmins(){
+        return userRepo.findByRole(UserRole.ADMIN);
+    }
+    public List<User> getRegulars(){return userRepo.findByRole(UserRole.REGULAR);}
+
+    public boolean addBadge(String username, BadgeType badge){
+        Optional<User> opUser = userRepo.findByUsername(username);
+        if (opUser != null){
+            User user = opUser.get();
+            user.setBadge(badge);
+            user.getRepositories().forEach(repo-> repo.setBadge(badge));
+            userRepo.save(user);
+            return true;
+        }
+        return false;
+    }
 }

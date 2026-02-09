@@ -1,0 +1,39 @@
+.results {
+    width: 100%;
+    overflow-x: hidden;
+    height: 600px;
+}
+
+.items {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    flex-wrap: wrap;
+    /* justify-content: space-evenly; */
+    gap: 10px;
+    width: 100%;
+    height: 370px;
+}
+
+.no-results {
+    text-align: center;
+    padding: 3rem;
+    color: var(--p-zinc-500);
+    height: 526px;
+}
+
+.no-results i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.no-results p {
+    margin: 0;
+}
+
+.pagination-container, .pagination {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

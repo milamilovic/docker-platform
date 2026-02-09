@@ -13,20 +13,31 @@ import { AvatarModule } from 'primeng/avatar';
 import { DialogModule } from 'primeng/dialog';
 import { ToastModule } from 'primeng/toast';
 import { PasswordModule } from 'primeng/password';
+import { CheckboxModule } from 'primeng/checkbox';
+import { SelectModule } from 'primeng/select';
 
 // import { AvatarGroupModule } from 'primeng/avatargroup';
 
-import { ReactiveFormsModule } from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { AppRoutingModule } from './app-routing-module';
 import { App } from './app';
 import { Hello } from './features/hello/hello';
 import { Navbar } from './core/navbar/navbar';
 import { Home } from './features/home/home';
 import { Sidebar } from './core/sidebar/sidebar';
-import { Register } from './features/register/register';
+import { Register } from './features/users/register/register';
 import { Auth } from './features/auth/auth';
-import {Interceptor} from './features/auth/interceptor';
-import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@angular/common/http';
+import { Interceptor } from './features/auth/interceptor';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { RepoCard } from './shared/components/repo-card/repo-card';
+import { SearchResults } from './features/search-results/search-results';
+import { AnalyticsModule } from './features/analytics/analytics.module';
+import { RepositoriesModule } from './features/repositories/repositories-module';
+import { Admins } from './features/users/admins/admins';
+import {TableModule} from 'primeng/table';
+import {TagModule} from 'primeng/tag';
+import { Profile } from './features/users/profile/profile';
+import { Regulars } from './features/users/regulars/regulars';
 
 @NgModule({
   declarations: [
@@ -37,6 +48,11 @@ import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@ang
     Sidebar,
     Register,
     Auth,
+    RepoCard,
+    SearchResults,
+    Admins,
+    Profile,
+    Regulars,
   ],
   imports: [
     BrowserModule,
@@ -49,8 +65,15 @@ import {HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi} from '@ang
     DialogModule,
     ReactiveFormsModule,
     ToastModule,
-    PasswordModule
+    PasswordModule,
+    AnalyticsModule,
+    CheckboxModule,
     // AvatarGroupModule
+    RepositoriesModule,
+    SelectModule,
+    FormsModule,
+        TableModule,
+        TagModule
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),

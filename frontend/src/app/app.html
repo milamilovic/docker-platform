@@ -1,5 +1,47 @@
-<app-navbar></app-navbar>
-<div class="content">
+<ng-container>
+  <app-navbar></app-navbar>
+  <div class="content">
     <app-sidebar class="sidebar"></app-sidebar>
-    <app-home class="content"></app-home>
-</div>
+    <div class="main-content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</ng-container>
+
+<p-dialog
+  [(visible)]="displayLockdown"
+  [modal]="true"
+  [closable]="false"
+  [style]="{width: '450px'}">
+
+  <ng-template pTemplate="header">
+    <i class="pi pi-exclamation-triangle" style="margin-right: 0.5rem;"></i>
+    System Setup Required
+  </ng-template>
+
+  <div class="p-fluid setup-container">
+    <p class="setup-text">The system is locked. Please reset credentials to continue.</p>
+
+    <div class="input-group">
+      <label for="username">Username</label>
+      <input id="username" type="text" pInputText [(ngModel)]="setupData.username" placeholder="Enter username" />
+    </div>
+
+    <div class="input-group">
+      <label for="oldPassword">Old Password</label>
+      <input id="oldPassword" type="password" pInputText [(ngModel)]="setupData.password" placeholder="********" />
+    </div>
+
+    <div class="input-group">
+      <label for="newPassword">New Password</label>
+      <input id="newPassword" type="password" pInputText [(ngModel)]="setupData.newPassword" placeholder="********" />
+    </div>
+
+    <button pButton
+            label="Initialize System"
+            icon="pi pi-check"
+            class="setup-btn"
+            (click)="submitSetup()">
+    </button>
+  </div>
+</p-dialog>

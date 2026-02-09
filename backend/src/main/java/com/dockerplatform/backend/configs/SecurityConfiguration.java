@@ -2,11 +2,14 @@ package com.dockerplatform.backend.configs;
 
 import com.dockerplatform.backend.security.CustomUserDetailsService;
 import com.dockerplatform.backend.security.JwtFilter;
+import com.dockerplatform.backend.security.SystemLockdownFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -14,6 +17,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.config.Customizer;
 
 @Configuration
 @EnableWebSecurity
@@ -22,16 +26,30 @@ public class SecurityConfiguration {
     @Autowired
     private JwtFilter jwtFilter;
 
+    @Autowired
+    private SystemLockdownFilter lockdownFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-         return http.csrf(customizer -> customizer.disable())
+         return http
+                 .cors(Customizer.withDefaults())
+                 .csrf(customizer -> customizer.disable())
+                 .httpBasic(basic -> {})
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/user/register","/auth").permitAll()
+                        .requestMatchers("/user/register","/auth/**", "/public/**").permitAll()
+                        .requestMatchers("/stars/**", "/repositories/check/*").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/registry/events").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/auth/token").authenticated()
+                        .requestMatchers("/analytics/**").hasAuthority("ADMIN")
+                        .requestMatchers("/analytics/logs").hasAuthority("ADMIN")
+                        .requestMatchers("/analytics/logs/export").hasAuthority("ADMIN")
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated())
-                .sessionManagement(session ->
+                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).build();
+                 .addFilterBefore(lockdownFilter, UsernamePasswordAuthenticationFilter.class)
+                 .addFilterBefore(jwtFilter, SystemLockdownFilter.class)
+                 .build();
 
     }
 
@@ -49,7 +67,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfiguration) throws Exception{
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfiguration) throws Exception {
         return authConfiguration.getAuthenticationManager();
     }
 }
